@@ -25,6 +25,7 @@ if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').cat
 html,body{margin:0;height:100%;overflow:hidden;background:#0e0f12;color:#eceae6;font-family:'Barlow',Helvetica,sans-serif;}
 *{box-sizing:border-box;}
 a{color:#9db4ff;}a:hover{color:#c9d6ff;}
+@keyframes sponsorScroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
 @keyframes fimPulse{0%,100%{transform:scale(1);text-shadow:0 .6vh 2vh rgba(0,0,0,.8);}50%{transform:scale(1.06);text-shadow:0 0 5vh rgba(242,201,76,.8),0 .6vh 2vh rgba(0,0,0,.8);}}
 </style>
 </helmet>
@@ -170,20 +171,20 @@ a{color:#9db4ff;}a:hover{color:#c9d6ff;}
   </sc-if>
 
   <sc-if value="{{ saver }}" hint-placeholder-val="{{ false }}">
-    <div style="position:absolute;inset:0;z-index:20;overflow:hidden;background:#0b0b0c;">
+    <div style="position:absolute;inset:0;z-index:20;overflow:hidden;display:flex;flex-direction:column;background:#0b0b0c;">
       <img src="/assets/arte-campeonato.png" alt="" style="position:absolute;inset:-6%;width:112%;height:112%;object-fit:cover;object-position:center 20%;filter:blur(5vh) brightness(.32) saturate(1.2);">
       <div style="position:absolute;left:-10vw;top:58vh;width:56vw;height:1.2vh;background:#f07a12;transform:rotate(-8deg);-webkit-mask-image:linear-gradient(90deg,#000 70%,transparent);mask-image:linear-gradient(90deg,#000 70%,transparent);opacity:.85;"></div>
       <div style="position:absolute;left:-10vw;top:62vh;width:56vw;height:.4vh;background:#f07a12;transform:rotate(-8deg);-webkit-mask-image:linear-gradient(90deg,#000 70%,transparent);mask-image:linear-gradient(90deg,#000 70%,transparent);opacity:.5;"></div>
-      <div style="position:relative;height:100%;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:5vw;padding:4vh 6vw;">
-        <div style="height:88vh;aspect-ratio:898 / 1090;overflow:hidden;-webkit-mask-image:linear-gradient(180deg,#000 88%,transparent 100%);mask-image:linear-gradient(180deg,#000 88%,transparent 100%);">
+      <div style="position:relative;flex:1;min-height:0;overflow:hidden;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:5vw;padding:3vh 6vw 1vh;">
+        <div style="height:min(72vh,38vw);aspect-ratio:898 / 1090;overflow:hidden;-webkit-mask-image:linear-gradient(180deg,#000 88%,transparent 100%);mask-image:linear-gradient(180deg,#000 88%,transparent 100%);">
           <img src="/assets/arte-campeonato.png" alt="1º Campeonato Open de Jiu-Jitsu Tameon" style="display:block;width:100%;height:auto;">
         </div>
-        <div style="display:flex;flex-direction:column;gap:3.4vh;min-width:0;">
-          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:3.4vh;letter-spacing:.14em;white-space:nowrap;color:#d8d6d0;">TAMEON · ACADEMIA DE ARTES MARCIAIS</div>
-          <div style="min-height:46vh;display:flex;flex-direction:column;justify-content:center;gap:2.4vh;opacity:{{ slideOp }};transform:translateY({{ slideY }});transition:opacity .6s ease, transform .6s ease;">
-            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:3.6vh;letter-spacing:.2em;color:#f07a12;">{{ slide.kicker }}</div>
-            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:10.5vh;line-height:.92;text-transform:uppercase;color:#ffffff;text-wrap:balance;">{{ slide.a }} <span style="color:#f07a12;">{{ slide.b }}</span></div>
-            <div style="font-size:4vh;font-weight:500;line-height:1.25;color:#e4e2dc;text-wrap:pretty;">{{ slide.sub }}</div>
+        <div style="display:flex;flex-direction:column;gap:2.6vh;min-width:0;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:3vh;letter-spacing:.14em;white-space:nowrap;color:#d8d6d0;">TAMEON · ACADEMIA DE ARTES MARCIAIS</div>
+          <div style="min-height:38vh;display:flex;flex-direction:column;justify-content:center;gap:2vh;opacity:{{ slideOp }};transform:translateY({{ slideY }});transition:opacity .6s ease, transform .6s ease;">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:3.2vh;letter-spacing:.2em;color:#f07a12;">{{ slide.kicker }}</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:min(8.6vh,4.8vw);line-height:.92;text-transform:uppercase;color:#ffffff;text-wrap:balance;">{{ slide.a }} <span style="color:#f07a12;">{{ slide.b }}</span></div>
+            <div style="font-size:3.4vh;font-weight:500;line-height:1.25;color:#e4e2dc;text-wrap:pretty;">{{ slide.sub }}</div>
           </div>
           <div style="display:flex;gap:.8vw;">
             <sc-for list="{{ dots }}" as="d" hint-placeholder-count="8">
@@ -191,15 +192,28 @@ a{color:#9db4ff;}a:hover{color:#c9d6ff;}
             </sc-for>
           </div>
           <sc-if value="{{ hasNext }}" hint-placeholder-val="{{ false }}">
-            <div style="display:flex;flex-direction:column;gap:1.2vh;margin-top:2vh;padding-top:3vh;border-top:.3vh solid #3a3632;">
-              <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:3.4vh;letter-spacing:.2em;color:#f07a12;">PRÓXIMA LUTA {{ nextCat }}</div>
-              <div style="display:flex;flex-wrap:wrap;align-items:center;gap:1.6vw;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:7vh;line-height:1;text-transform:uppercase;">
-                <span style="background:#f3f2ee;color:#15161a;padding:.8vh 1.4vw;border-radius:.8vh;">{{ nextW }}</span>
-                <span style="color:#9a968f;font-size:4.6vh;">VS</span>
-                <span style="background:#1c3f99;color:#ffffff;padding:.8vh 1.4vw;border-radius:.8vh;">{{ nextB }}</span>
+            <div style="display:flex;flex-direction:column;gap:1.2vh;margin-top:1vh;padding-top:2.4vh;border-top:.3vh solid #3a3632;">
+              <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:3vh;letter-spacing:.2em;color:#f07a12;">PRÓXIMA LUTA {{ nextCat }}</div>
+              <div style="display:flex;align-items:center;gap:1.6vw;min-width:0;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:min(5.4vh,3vw);line-height:1;text-transform:uppercase;">
+                <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:#f3f2ee;color:#15161a;padding:.8vh 1.4vw;border-radius:.8vh;">{{ nextW }}</span>
+                <span style="flex-shrink:0;color:#9a968f;font-size:.7em;">VS</span>
+                <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:#1c3f99;color:#ffffff;padding:.8vh 1.4vw;border-radius:.8vh;">{{ nextB }}</span>
               </div>
             </div>
           </sc-if>
+        </div>
+      </div>
+      <div style="position:relative;flex-shrink:0;height:22vh;display:flex;align-items:center;gap:2.4vw;padding-left:6vw;background:linear-gradient(180deg,rgba(0,0,0,.45),rgba(0,0,0,.8));border-top:.3vh solid #3a3632;">
+        <div style="flex-shrink:0;font-family:'Barlow Condensed',sans-serif;font-weight:700;line-height:1.1;white-space:nowrap;">
+          <div style="font-size:2.6vh;letter-spacing:.18em;color:#9a968f;">OBRIGADO AOS</div>
+          <div style="font-size:3.4vh;letter-spacing:.14em;color:#f07a12;">PATROCINADORES</div>
+        </div>
+        <div style="flex:1;min-width:0;height:100%;display:flex;align-items:center;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);">
+          <div style="display:flex;align-items:center;width:max-content;animation:sponsorScroll {{ sponsorDur }} linear infinite;">
+            <sc-for list="{{ sponsors }}" as="p" hint-placeholder-count="10">
+              <img src="{{ p.src }}" alt="{{ p.name }}" style="flex-shrink:0;display:block;height:15vh;width:auto;margin-right:3.5vw;border-radius:1.2vh;">
+            </sc-for>
+          </div>
         </div>
       </div>
     </div>
@@ -223,6 +237,20 @@ const SLIDES = [
   { kicker:'JIU-JITSU NA SOCIEDADE', a:'Jiu-jitsu transforma.', b:'Esporte educa.', sub:'Oportunidades geram campeões.' }
 ];
 const SLIDE_MS = 8000;
+// faixa da tela de proteção: rola sem parar; a lista vai duplicada para o laço não ter emenda
+const SPONSORS = [
+  ['br-motos', 'BR Motos de Cacoal'],
+  ['pet-shopping', 'Pet Shopping Casal 20'],
+  ['vitoria-ferragens', 'Vitória Ferragens'],
+  ['ramalho-paineis', 'Ramalho Painéis'],
+  ['team-zimmermann', 'Equipe Jiu-Jitsu Jonas Zimmermann'],
+  ['jhony-croc', 'Jhony Croc Coxinhas'],
+  ['copicenter', 'Copicenter'],
+  ['cvt-vistoria', 'CVT Cacoal Vistoria Técnica de Veículos'],
+  ['salaam-aleikum', 'Salaam Aleikum Parfum'],
+  ['almeida-fight-club', 'Almeida Fight Club']
+].map(([f, name]) => ({ src: '/assets/patrocinadores/' + f + '.webp', name }));
+const SPONSOR_LIST = SPONSORS.concat(SPONSORS);
 const empty = { name:'', team:'', c:{}, adv:0, pen:0 };
 // método de vitória → coluna do quadro que decidiu a luta (0 pontos, 1 vantagens, 2 punições)
 const DECISIVE = { 'Pontos':0, 'Vantagens':1, 'Menos punições':2 };
@@ -257,6 +285,7 @@ class Component extends DCLogic {
     const pill = k => k === 'w' ? { name: w.name, bg: '#f3f2ee', fg: '#15161a' } : { name: b.name, bg: '#1c3f99', fg: '#ffffff' };
     return {
       saver: !!s.saver,
+      sponsors: SPONSOR_LIST, sponsorDur: SPONSORS.length * 5 + 's',
       ...(() => { const now = Date.now(), idx = Math.floor(now / SLIDE_MS) % SLIDES.length, loc = now % SLIDE_MS, vis = loc > 500 && loc < SLIDE_MS - 700;
         return { slide: SLIDES[idx], slideOp: vis ? 1 : 0, slideY: vis ? '0' : '2vh',
           dots: SLIDES.map((_, i) => ({ w: i === idx ? '4vw' : '1.2vw', bg: i === idx ? '#f07a12' : '#4a4540' })) }; })(),

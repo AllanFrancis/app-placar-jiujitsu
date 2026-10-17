@@ -10,6 +10,8 @@ const PRECACHE = [
   '/favicon.svg',
   '/assets/apple-touch-icon.png',
   '/assets/arte-campeonato.png',
+  ...['br-motos', 'pet-shopping', 'vitoria-ferragens', 'ramalho-paineis', 'team-zimmermann', 'jhony-croc', 'copicenter', 'cvt-vistoria', 'salaam-aleikum', 'almeida-fight-club']
+    .map(f => `/assets/patrocinadores/${f}.webp`),
   '/vendor/react.production.min.js',
   '/vendor/react-dom.production.min.js',
   '/vendor/babel.min.js',

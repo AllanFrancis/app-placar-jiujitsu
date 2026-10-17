@@ -14,34 +14,35 @@
 html,body{margin:0;height:100%;overflow:hidden;background:#0e0f12;color:#eceae6;font-family:'Barlow',Helvetica,sans-serif;}
 *{box-sizing:border-box;}
 a{color:#9db4ff;}a:hover{color:#c9d6ff;}
+@keyframes fimPulse{0%,100%{transform:scale(1);text-shadow:0 .6vh 2vh rgba(0,0,0,.8);}50%{transform:scale(1.06);text-shadow:0 0 5vh rgba(242,201,76,.8),0 .6vh 2vh rgba(0,0,0,.8);}}
 </style>
 </helmet>
 <div style="position:relative;height:100vh;display:flex;flex-direction:column;background:#0e0f12;">
 
-  <div style="flex:1;min-height:0;display:flex;flex-direction:{{ dir }};">
+  <div style="position:relative;flex:1;min-height:0;display:flex;flex-direction:{{ dir }};">
     <div style="flex:1;min-width:0;min-height:0;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;padding:3vh 3vw 7vh;background:#f3f2ee;color:#15161a;">
-      <div style="min-width:0;">
+      <div style="min-width:0;align-self:{{ wSelf }};text-align:{{ wAlign }};">
         <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:8.5vh;line-height:1;text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ w.name }}</div>
         <div style="font-size:3.4vh;font-weight:600;color:#55544f;margin-top:.6vh;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ w.team }}</div>
       </div>
       <div style="display:flex;flex-direction:{{ wRow }};align-items:flex-end;justify-content:space-between;gap:2vw;">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:min(38vh,26vw);line-height:.9;font-variant-numeric:tabular-nums;">{{ w.score }}</div>
-        <div style="display:flex;flex-direction:column;gap:1.4vh;">
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:1.6vw;background:#15161a;color:#f3f2ee;border-radius:1.4vh;padding:1.2vh 1.6vw;"><span style="font-size:4.4vh;font-weight:800;letter-spacing:.06em;">VANTAGEM</span><span style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12vh;line-height:1;min-width:6vw;text-align:right;">{{ w.adv }}</span></div>
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:1.6vw;background:#b3261e;color:#ffffff;border-radius:1.4vh;padding:1.2vh 1.6vw;"><span style="font-size:4.4vh;font-weight:800;letter-spacing:.06em;">PUNIÇÃO</span><span style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12vh;line-height:1;min-width:6vw;text-align:right;">{{ w.pen }}</span></div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:{{ w.scoreFs }};line-height:.9;font-variant-numeric:tabular-nums;white-space:nowrap;">{{ w.score }}</div>
+        <div style="display:flex;flex-direction:column;gap:1.4vh;flex-shrink:0;white-space:nowrap;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:1.6vw;background:#15161a;color:#f3f2ee;border-radius:1.4vh;padding:1.2vh 1.6vw;"><span style="font-size:4.4vh;font-weight:800;letter-spacing:.06em;">VANT.</span><span style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12vh;line-height:1;min-width:6vw;text-align:right;">{{ w.adv }}</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:1.6vw;background:#b3261e;color:#ffffff;border-radius:1.4vh;padding:1.2vh 1.6vw;"><span style="font-size:4.4vh;font-weight:800;letter-spacing:.06em;">PUN.</span><span style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12vh;line-height:1;min-width:6vw;text-align:right;">{{ w.pen }}</span></div>
         </div>
       </div>
     </div>
     <div style="flex:1;min-width:0;min-height:0;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;padding:3vh 3vw 7vh;background:#1c3f99;color:#ffffff;">
-      <div style="min-width:0;">
+      <div style="min-width:0;align-self:{{ bSelf }};text-align:{{ bAlign }};">
         <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:8.5vh;line-height:1;text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ b.name }}</div>
         <div style="font-size:3.4vh;font-weight:600;color:#c3d0f2;margin-top:.6vh;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ b.team }}</div>
       </div>
       <div style="display:flex;flex-direction:{{ bRow }};align-items:flex-end;justify-content:space-between;gap:2vw;">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:min(38vh,26vw);line-height:.9;font-variant-numeric:tabular-nums;">{{ b.score }}</div>
-        <div style="display:flex;flex-direction:column;gap:1.4vh;">
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:1.6vw;background:#ffffff;color:#1c3f99;border-radius:1.4vh;padding:1.2vh 1.6vw;"><span style="font-size:4.4vh;font-weight:800;letter-spacing:.06em;">VANTAGEM</span><span style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12vh;line-height:1;min-width:6vw;text-align:right;">{{ b.adv }}</span></div>
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:1.6vw;background:#b3261e;color:#ffffff;border-radius:1.4vh;padding:1.2vh 1.6vw;"><span style="font-size:4.4vh;font-weight:800;letter-spacing:.06em;">PUNIÇÃO</span><span style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12vh;line-height:1;min-width:6vw;text-align:right;">{{ b.pen }}</span></div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:{{ b.scoreFs }};line-height:.9;font-variant-numeric:tabular-nums;white-space:nowrap;">{{ b.score }}</div>
+        <div style="display:flex;flex-direction:column;gap:1.4vh;flex-shrink:0;white-space:nowrap;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:1.6vw;background:#ffffff;color:#1c3f99;border-radius:1.4vh;padding:1.2vh 1.6vw;"><span style="font-size:4.4vh;font-weight:800;letter-spacing:.06em;">VANT.</span><span style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12vh;line-height:1;min-width:6vw;text-align:right;">{{ b.adv }}</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:1.6vw;background:#b3261e;color:#ffffff;border-radius:1.4vh;padding:1.2vh 1.6vw;"><span style="font-size:4.4vh;font-weight:800;letter-spacing:.06em;">PUN.</span><span style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12vh;line-height:1;min-width:6vw;text-align:right;">{{ b.pen }}</span></div>
         </div>
       </div>
     </div>
@@ -52,7 +53,7 @@ a{color:#9db4ff;}a:hover{color:#c9d6ff;}
     <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(11,11,12,.55) 0%,rgba(11,11,12,.88) 35%,rgba(11,11,12,.88) 65%,rgba(11,11,12,.55) 100%);pointer-events:none;"></div>
     <div style="position:absolute;inset:auto 0 0 0;height:.5vh;background:#f07a12;opacity:.6;"></div>
     <div style="position:relative;justify-self:end;text-align:right;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:4vh;line-height:1.1;letter-spacing:.06em;text-transform:uppercase;color:#d8d6d0;text-wrap:balance;">{{ cat }}</div>
-    <div style="position:relative;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:28vh;line-height:1;text-shadow:0 .6vh 2vh rgba(0,0,0,.8);font-variant-numeric:tabular-nums;color:{{ timeColor }};">{{ time }}</div>
+    <div style="position:relative;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:28vh;line-height:1;text-shadow:0 .6vh 2vh rgba(0,0,0,.8);font-variant-numeric:tabular-nums;color:{{ timeColor }};animation:{{ timeAnim }};">{{ time }}</div>
     <div style="position:relative;justify-self:start;">
       <sc-if value="{{ paused }}" hint-placeholder-val="{{ false }}">
         <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:4.5vh;letter-spacing:.14em;color:#f2c94c;border:.4vh solid #f2c94c;border-radius:1vh;padding:.6vh 1.6vw;">PAUSADO</div>
@@ -63,9 +64,88 @@ a{color:#9db4ff;}a:hover{color:#c9d6ff;}
   <sc-if value="{{ hasWinner }}" hint-placeholder-val="{{ false }}">
     <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2vh;background:{{ winBg }};color:{{ winFg }};text-align:center;padding:4vw;">
       <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:7vh;letter-spacing:.3em;color:{{ winAccent }};">VENCEDOR</div>
-      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:min(20vh,11vw);line-height:.95;text-transform:uppercase;opacity:{{ blinkOp }};text-wrap:balance;">{{ winName }}</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:min(16vh,10vw);line-height:.95;text-transform:uppercase;opacity:{{ blinkOp }};text-wrap:balance;">{{ winName }}</div>
       <div style="font-size:4.5vh;font-weight:600;">{{ winMethod }}</div>
-      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:6vh;margin-top:2vh;">{{ finalScore }}</div>
+      <div style="width:min(80vw,140vh);margin-top:2vh;background:#0e0f12;color:#ffffff;border:.3vh solid #2a2c32;border-radius:2vh;padding:1.6vh 2.4vw 1vh;box-shadow:0 1.6vh 4vh rgba(0,0,0,.35);text-align:left;">
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) repeat(3,16vh);gap:0 1.4vw;align-items:end;padding-bottom:1vh;border-bottom:.3vh solid #2a2c32;">
+          <span></span>
+          <sc-for list="{{ sc.cols }}" as="c" hint-placeholder-count="3">
+            <div style="text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:3vh;letter-spacing:.16em;color:{{ c.fg }};">{{ c.label }}<div style="width:60%;height:.5vh;margin:.6vh auto 0;border-radius:.3vh;background:{{ c.bar }};"></div></div>
+          </sc-for>
+        </div>
+        <sc-for list="{{ sc.rows }}" as="r" hint-placeholder-count="2">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) repeat(3,16vh);gap:0 1.4vw;align-items:center;padding:1vh 0;">
+            <div style="display:flex;align-items:center;gap:1.2vw;min-width:0;">
+              <span style="flex-shrink:0;width:3.6vh;height:3.6vh;border-radius:.8vh;background:{{ r.chip }};border:.3vh solid #ffffff;"></span>
+              <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:6.5vh;line-height:1;text-transform:uppercase;color:{{ r.nameFg }};">{{ r.name }}</span>
+              <span style="flex-shrink:0;color:#f2c94c;font-size:5vh;line-height:1;">{{ r.mark }}</span>
+            </div>
+            <sc-for list="{{ r.cells }}" as="v" hint-placeholder-count="3">
+              <div style="text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:10vh;line-height:1.1;font-variant-numeric:tabular-nums;border-radius:1.2vh;background:{{ v.bg }};color:{{ v.fg }};">{{ v.val }}</div>
+            </sc-for>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isDecision }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2vh;background:#15161a;color:#ffffff;text-align:center;padding:4vw;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:7vh;letter-spacing:.3em;color:#f2c94c;">EMPATE</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:min(14vh,9vw);line-height:.95;text-transform:uppercase;opacity:{{ blinkOp }};text-wrap:balance;">Decisão dos árbitros</div>
+      <div style="font-size:4.5vh;font-weight:600;">a luta terminou empatada · aguardando o resultado</div>
+      <div style="width:min(80vw,140vh);margin-top:2vh;background:#0e0f12;color:#ffffff;border:.3vh solid #2a2c32;border-radius:2vh;padding:1.6vh 2.4vw 1vh;box-shadow:0 1.6vh 4vh rgba(0,0,0,.35);text-align:left;">
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) repeat(3,16vh);gap:0 1.4vw;align-items:end;padding-bottom:1vh;border-bottom:.3vh solid #2a2c32;">
+          <span></span>
+          <sc-for list="{{ sc.cols }}" as="c" hint-placeholder-count="3">
+            <div style="text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:3vh;letter-spacing:.16em;color:{{ c.fg }};">{{ c.label }}<div style="width:60%;height:.5vh;margin:.6vh auto 0;border-radius:.3vh;background:{{ c.bar }};"></div></div>
+          </sc-for>
+        </div>
+        <sc-for list="{{ sc.rows }}" as="r" hint-placeholder-count="2">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) repeat(3,16vh);gap:0 1.4vw;align-items:center;padding:1vh 0;">
+            <div style="display:flex;align-items:center;gap:1.2vw;min-width:0;">
+              <span style="flex-shrink:0;width:3.6vh;height:3.6vh;border-radius:.8vh;background:{{ r.chip }};border:.3vh solid #ffffff;"></span>
+              <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:6.5vh;line-height:1;text-transform:uppercase;color:{{ r.nameFg }};">{{ r.name }}</span>
+              <span style="flex-shrink:0;color:#f2c94c;font-size:5vh;line-height:1;">{{ r.mark }}</span>
+            </div>
+            <sc-for list="{{ r.cells }}" as="v" hint-placeholder-count="3">
+              <div style="text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:10vh;line-height:1.1;font-variant-numeric:tabular-nums;border-radius:1.2vh;background:{{ v.bg }};color:{{ v.fg }};">{{ v.val }}</div>
+            </sc-for>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isBoth }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2vh;background:#15161a;color:#ffffff;text-align:center;padding:4vw;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:7vh;letter-spacing:.3em;color:#f2c94c;">VENCEDORES</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:2vw;max-width:100%;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:min(11vh,6vw);line-height:1;text-transform:uppercase;opacity:{{ blinkOp }};">
+        <span style="min-width:0;max-width:44vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:{{ drawL.bg }};color:{{ drawL.fg }};padding:1.4vh 2vw;border-radius:1.4vh;">{{ drawL.name }}</span>
+        <span style="flex-shrink:0;color:#f2c94c;">&amp;</span>
+        <span style="min-width:0;max-width:44vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:{{ drawR.bg }};color:{{ drawR.fg }};padding:1.4vh 2vw;border-radius:1.4vh;">{{ drawR.name }}</span>
+      </div>
+      <div style="font-size:4.5vh;font-weight:600;">empate · os dois atletas saíram vencedores</div>
+      <div style="width:min(80vw,140vh);margin-top:2vh;background:#0e0f12;color:#ffffff;border:.3vh solid #2a2c32;border-radius:2vh;padding:1.6vh 2.4vw 1vh;box-shadow:0 1.6vh 4vh rgba(0,0,0,.35);text-align:left;">
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) repeat(3,16vh);gap:0 1.4vw;align-items:end;padding-bottom:1vh;border-bottom:.3vh solid #2a2c32;">
+          <span></span>
+          <sc-for list="{{ sc.cols }}" as="c" hint-placeholder-count="3">
+            <div style="text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:3vh;letter-spacing:.16em;color:{{ c.fg }};">{{ c.label }}<div style="width:60%;height:.5vh;margin:.6vh auto 0;border-radius:.3vh;background:{{ c.bar }};"></div></div>
+          </sc-for>
+        </div>
+        <sc-for list="{{ sc.rows }}" as="r" hint-placeholder-count="2">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) repeat(3,16vh);gap:0 1.4vw;align-items:center;padding:1vh 0;">
+            <div style="display:flex;align-items:center;gap:1.2vw;min-width:0;">
+              <span style="flex-shrink:0;width:3.6vh;height:3.6vh;border-radius:.8vh;background:{{ r.chip }};border:.3vh solid #ffffff;"></span>
+              <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:6.5vh;line-height:1;text-transform:uppercase;color:{{ r.nameFg }};">{{ r.name }}</span>
+              <span style="flex-shrink:0;color:#f2c94c;font-size:5vh;line-height:1;">{{ r.mark }}</span>
+            </div>
+            <sc-for list="{{ r.cells }}" as="v" hint-placeholder-count="3">
+              <div style="text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:10vh;line-height:1.1;font-variant-numeric:tabular-nums;border-radius:1.2vh;background:{{ v.bg }};color:{{ v.fg }};">{{ v.val }}</div>
+            </sc-for>
+          </div>
+        </sc-for>
+      </div>
     </div>
   </sc-if>
 
@@ -104,7 +184,7 @@ a{color:#9db4ff;}a:hover{color:#c9d6ff;}
       </div>
     </div>
   </sc-if>
-  <button onClick="{{ fullscreen }}" style="position:absolute;right:1vw;top:1.4vh;height:36px;padding:0 12px;border-radius:8px;border:1px solid #2c2e34;background:#0e0f12;color:#8a8a90;font-family:inherit;font-size:13px;cursor:pointer;opacity:{{ fsOp }};z-index:30;">Tela cheia</button>
+  <button onClick="{{ fullscreen }}" style="position:absolute;right:1vw;bottom:1.4vh;height:36px;padding:0 12px;border-radius:8px;border:1px solid #2c2e34;background:#0e0f12;color:#8a8a90;font-family:inherit;font-size:13px;cursor:pointer;opacity:{{ fsOp }};z-index:30;">Tela cheia</button>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script>
@@ -124,6 +204,8 @@ const SLIDES = [
 ];
 const SLIDE_MS = 8000;
 const empty = { name:'', team:'', c:{}, adv:0, pen:0 };
+// método de vitória → coluna do quadro que decidiu a luta (0 pontos, 1 vantagens, 2 punições)
+const DECISIVE = { 'Pontos':0, 'Vantagens':1, 'Menos punições':2 };
 
 class Component extends DCLogic {
   constructor(p) {
@@ -146,10 +228,13 @@ class Component extends DCLogic {
   renderVals() {
     const s = this.state.s;
     const t = s.running ? Math.max(0, s.remaining - (Date.now() - s.anchor)/1000) : s.remaining;
-    const f = k => { const x = s[k] || empty; return { name: x.name || (k === 'w' ? 'Branco' : 'Azul'), team: x.team, score: score(x), adv: x.adv, pen: x.pen }; };
+    const f = k => { const x = s[k] || empty; return { name: x.name || (k === 'w' ? 'Branco' : 'Azul'), team: x.team, score: score(x), scoreFs: score(x) >= 10 ? 'min(38vh,18vw)' : 'min(38vh,26vw)', adv: x.adv, pen: x.pen }; };
     const w = f('w'), b = f('b');
     const win = s.winner;
+    const isWin = !!win && (win.side === 'w' || win.side === 'b');
+    const isDraw = !!win && !isWin, isDecision = isDraw && win.side === 'decision';
     const blinkOn = Math.floor(Date.now()/500) % 2 === 0;
+    const pill = k => k === 'w' ? { name: w.name, bg: '#f3f2ee', fg: '#15161a' } : { name: b.name, bg: '#1c3f99', fg: '#ffffff' };
     return {
       saver: !!s.saver,
       ...(() => { const now = Date.now(), idx = Math.floor(now / SLIDE_MS) % SLIDES.length, loc = now % SLIDE_MS, vis = loc > 500 && loc < SLIDE_MS - 700;
@@ -161,15 +246,30 @@ class Component extends DCLogic {
       nextCat: s.cat ? '· ' + s.cat.toUpperCase() : '',
       cat: s.cat, dir: s.flipMon ? 'row-reverse' : 'row', w, b,
       wRow: s.flipMon ? 'row' : 'row-reverse', bRow: s.flipMon ? 'row-reverse' : 'row',
-      time: fmt(t), timeColor: t <= 0 ? '#ff6b5e' : '#eceae6',
+      wAlign: s.flipMon ? 'right' : 'left', wSelf: s.flipMon ? 'flex-end' : 'flex-start',
+      bAlign: s.flipMon ? 'left' : 'right', bSelf: s.flipMon ? 'flex-start' : 'flex-end',
+      time: fmt(t), timeColor: t <= 0 ? '#ff6b5e' : (t <= 10 ? '#f2c94c' : '#eceae6'),
+      // últimos 10 segundos: dourado, pulsando enquanto o cronômetro corre
+      timeAnim: s.running && t > 0 && t <= 10 ? 'fimPulse 1s ease-in-out infinite' : 'none',
       paused: !s.running && t > 0 && t < s.dur && !win,
-      hasWinner: !!win,
+      hasWinner: isWin,
+      isDecision, isBoth: isDraw && !isDecision,
+      drawL: pill(s.flipMon ? 'b' : 'w'), drawR: pill(s.flipMon ? 'w' : 'b'),
       winBg: win && win.side === 'b' ? '#1c3f99' : '#f3f2ee',
       winFg: win && win.side === 'b' ? '#ffffff' : '#15161a',
       winAccent: win && win.side === 'b' ? '#f2c94c' : '#8a6400',
       winName: win ? (win.side === 'w' ? w.name : b.name) : '',
-      winMethod: win ? 'por ' + win.method.toLowerCase() : '',
-      finalScore: (s.flipMon ? b.score + ' × ' + w.score : w.score + ' × ' + b.score),
+      winMethod: isWin ? 'por ' + win.method.toLowerCase() : '',
+      sc: (() => {
+        const dc = isWin && win.method in DECISIVE ? DECISIVE[win.method] : -1;
+        const order = isWin ? [win.side, win.side === 'w' ? 'b' : 'w'] : (s.flipMon ? ['b','w'] : ['w','b']);
+        return {
+          cols: ['PONTOS','VANTAGENS','PUNIÇÕES'].map((label, i) => ({ label, fg: i === dc ? '#f2c94c' : '#9a968f', bar: i === dc ? '#f2c94c' : 'transparent' })),
+          rows: order.map(k => { const x = k === 'w' ? w : b, isW = isWin && k === win.side;
+            return { name: x.name, chip: k === 'w' ? '#f3f2ee' : '#2f5fd0', mark: isW ? '★' : '', nameFg: !isWin || isW ? '#ffffff' : '#a6a39c',
+              cells: [x.score, x.adv, x.pen].map((val, i) => ({ val, bg: i === dc ? 'rgba(242,201,76,.16)' : 'transparent', fg: i === dc ? '#f2c94c' : (i === 2 && val > 0 ? '#ff8a80' : '#ffffff') })) }; })
+        };
+      })(),
       blinkOp: blinkOn ? 1 : 0.12,
       fsOp: this.state.idle ? 0 : 1,
       fullscreen: () => { const d = document.documentElement; if (!document.fullscreenElement) d.requestFullscreen && d.requestFullscreen(); else document.exitFullscreen(); }

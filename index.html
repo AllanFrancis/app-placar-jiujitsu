@@ -25,6 +25,7 @@ button{font-family:inherit;cursor:pointer;}
     <button onClick="{{ undo }}" style="height:40px;padding:0 14px;border-radius:8px;border:1px solid #2c2e34;background:#1a1b20;color:#eceae6;font-size:14px;font-weight:600;opacity:{{ undoOp }};">↶ Desfazer</button>
     <button onClick="{{ toggleFlipOp }}" style="height:40px;padding:0 14px;border-radius:8px;border:1px solid #2c2e34;background:{{ flipOpBg }};color:#eceae6;font-size:14px;font-weight:600;">⇄ Inverter · Operador</button>
     <button onClick="{{ toggleFlipMon }}" style="height:40px;padding:0 14px;border-radius:8px;border:1px solid #2c2e34;background:{{ flipMonBg }};color:#eceae6;font-size:14px;font-weight:600;">⇄ Inverter · Monitor</button>
+    <button onClick="{{ swapFighters }}" style="height:40px;padding:0 14px;border-radius:8px;border:1px solid #2c2e34;background:#1a1b20;color:#eceae6;font-size:14px;font-weight:600;">⇆ Trocar lutadores</button>
     <button onClick="{{ toggleSound }}" style="height:40px;padding:0 14px;border-radius:8px;border:1px solid #2c2e34;background:#1a1b20;color:#eceae6;font-size:14px;font-weight:600;">{{ soundLabel }}</button>
     <button onClick="{{ newFight }}" style="height:40px;padding:0 14px;border-radius:8px;border:1px solid #2c2e34;background:#1a1b20;color:#eceae6;font-size:14px;font-weight:600;">Nova luta</button>
     <button onClick="{{ toggleSaver }}" style="height:40px;padding:0 14px;border-radius:8px;border:{{ saverBorder }};background:{{ saverBg }};color:{{ saverFg }};font-size:14px;font-weight:700;">{{ saverLabel }}</button>
@@ -60,6 +61,18 @@ button{font-family:inherit;cursor:pointer;}
     <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:12px 16px;border-radius:12px;background:#f2c94c;color:#101114;">
       <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:26px;letter-spacing:.02em;opacity:{{ blinkOp }};">VENCEDOR: {{ winnerName }} — {{ winnerMethod }}</div>
       <button onClick="{{ clearWinner }}" style="margin-left:auto;height:40px;padding:0 14px;border-radius:8px;border:1.5px solid #101114;background:transparent;color:#101114;font-size:14px;font-weight:700;">Remover vencedor</button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ hasDraw }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:12px 16px;border-radius:12px;background:#e4e2dc;color:#101114;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:26px;letter-spacing:.02em;opacity:{{ drawBlink }};">{{ drawTitle }}</div>
+      <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;">
+        <sc-if value="{{ isDecision }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ decideW }}" style="height:40px;padding:0 14px;border-radius:8px;border:1.5px solid #101114;background:#f3f2ee;color:#15161a;font-size:14px;font-weight:700;">{{ decideWLabel }}</button>
+          <button onClick="{{ decideB }}" style="height:40px;padding:0 14px;border-radius:8px;border:1.5px solid #1c3f99;background:#1c3f99;color:#ffffff;font-size:14px;font-weight:700;">{{ decideBLabel }}</button>
+        </sc-if>
+        <button onClick="{{ clearWinner }}" style="height:40px;padding:0 14px;border-radius:8px;border:1.5px solid #101114;background:transparent;color:#101114;font-size:14px;font-weight:700;">Remover empate</button>
+      </div>
     </div>
   </sc-if>
 
@@ -154,6 +167,12 @@ button{font-family:inherit;cursor:pointer;}
       </div>
     </div>
   </div>
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#1a1b20;border:1px solid #2c2e34;border-radius:12px;padding:10px 16px;">
+    <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;letter-spacing:.08em;margin-right:4px;">EMPATE</div>
+    <button onClick="{{ setBoth }}" style="height:44px;padding:0 16px;border-radius:8px;border:none;background:#f2c94c;color:#101114;font-size:15px;font-weight:700;">🏆 Empate · ambos vencedores</button>
+    <button onClick="{{ setDecision }}" style="height:44px;padding:0 16px;border-radius:8px;border:1.5px solid #f2c94c;background:transparent;color:#f2c94c;font-size:15px;font-weight:700;">⚖ Empate · decisão dos árbitros</button>
+    <span style="margin-left:auto;font-size:12px;color:#8a8a90;max-width:300px;text-align:right;">Se o tempo acabar empatado, a luta vai automaticamente para decisão dos árbitros.</span>
+  </div>
   <div style="display:flex;flex-direction:column;gap:8px;background:#1a1b20;border:1px solid #2c2e34;border-radius:12px;padding:12px 16px;">
     <div style="display:flex;align-items:center;gap:10px;">
       <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;letter-spacing:.08em;">HISTÓRICO DA PONTUAÇÃO</div>
@@ -181,7 +200,7 @@ button{font-family:inherit;cursor:pointer;}
         <div style="font-size:16px;color:#c9c8c3;line-height:1.4;text-wrap:pretty;">{{ confirmText }}</div>
         <div style="display:flex;gap:10px;margin-top:6px;">
           <button onClick="{{ cancelConfirm }}" style="flex:1;height:56px;border-radius:10px;border:1px solid #3a3c43;background:transparent;color:#eceae6;font-size:17px;font-weight:700;">Cancelar</button>
-          <button onClick="{{ doConfirm }}" style="flex:1;height:56px;border-radius:10px;border:none;background:#c62f25;color:#ffffff;font-size:17px;font-weight:700;">{{ confirmLabel }}</button>
+          <button onClick="{{ doConfirm }}" style="flex:1;height:56px;border-radius:10px;border:none;background:{{ confirmBg }};color:{{ confirmFg }};font-size:17px;font-weight:700;">{{ confirmLabel }}</button>
         </div>
       </div>
     </div>
@@ -234,13 +253,11 @@ class Component extends DCLogic {
         const dp = score(n.w) - score(n.b), da = n.w.adv - n.b.adv, dn = n.b.pen - n.w.pen;
         const cmp = dp || da || dn;
         const method = dp ? 'Pontos' : (da ? 'Vantagens' : 'Menos punições');
-        const entry = { t: '0:00', add: true, sw: score(n.w), sb: score(n.b) };
         if (cmp) {
           const k = cmp > 0 ? 'w' : 'b';
-          n.winner = { side: k, method };
-          n.log = (n.log || []).concat([Object.assign(entry, { k, who: n[k].name || (k === 'w' ? 'Branco' : 'Azul'), text: 'VENCEU por ' + method.toLowerCase() + ' (fim do tempo)' })]);
+          this.declare(n, k, method, 'VENCEU por ' + method.toLowerCase() + ' (fim do tempo)');
         } else {
-          n.log = (n.log || []).concat([Object.assign(entry, { k: 'w', who: 'Empate', text: 'fim do tempo — aguardando decisão dos árbitros' })]);
+          this.declare(n, 'decision', 'Decisão dos árbitros', 'fim do tempo — aguardando decisão dos árbitros');
         }
       });
       if (s.sound) this.beep();
@@ -264,6 +281,23 @@ class Component extends DCLogic {
     n.log = (n.log || []).concat([{ t: fmt(this.now(n)), k, who: nm, text, add, sw: score(n.w), sb: score(n.b) }]);
   }
   pause(n) { if (n.running) { n.remaining = this.now(n); n.running = false; } }
+  swapSides(n) {
+    const other = k => k === 'w' ? 'b' : (k === 'b' ? 'w' : k);
+    const color = { Branco: 'Azul', Azul: 'Branco' };
+    [n.w, n.b] = [n.b, n.w];
+    if (n.winner) n.winner.side = other(n.winner.side);
+    // o histórico acompanha os lutadores: a cor e o placar de cada registro também trocam
+    n.log = (n.log || []).map(e => Object.assign({}, e, { k: other(e.k), sw: e.sb, sb: e.sw }, (e.k === 'w' || e.k === 'b') && color[e.who] ? { who: color[e.who] } : {}));
+    const nm = k => n[k].name || (k === 'w' ? 'Branco' : 'Azul');
+    n.log.push({ t: fmt(this.now(n)), k: 'swap', who: 'Troca de lado', text: nm('w') + ' agora no branco · ' + nm('b') + ' agora no azul', add: false, sw: score(n.w), sb: score(n.b) });
+  }
+  // side: 'w' | 'b' (vencedor), 'both' (empate, ambos vencedores) ou 'decision' (empate aguardando árbitros)
+  declare(n, side, method, text) {
+    this.pause(n);
+    n.winner = { side, method };
+    const who = side === 'w' || side === 'b' ? (n[side].name || (side === 'w' ? 'Branco' : 'Azul')) : 'Empate';
+    n.log = (n.log || []).concat([{ t: fmt(this.now(n)), k: side, who, text, add: true, sw: score(n.w), sb: score(n.b) }]);
+  }
   side(k) {
     const f = this.state[k];
     const rows = TYPES.map(([key, label, p]) => ({
@@ -279,7 +313,7 @@ class Component extends DCLogic {
       advInc: rows[3].inc, advDec: rows[3].dec, penInc: rows[4].inc, penDec: rows[4].dec,
       onName: e => { const v = e.target.value; this.up(n => { n[k].name = v; }, false); },
       onTeam: e => { const v = e.target.value; this.up(n => { n[k].team = v; }, false); },
-      wins: METHODS.map(([m, label]) => ({ label, onClick: () => this.up(n => { this.pause(n); n.winner = { side:k, method:label }; const nm = n[k].name || (k === 'w' ? 'Branco' : 'Azul'); n.log = (n.log||[]).concat([{ t: fmt(n.remaining), k, who: nm, text: 'VENCEU por ' + label.toLowerCase(), add: true, sw: score(n.w), sb: score(n.b) }]); }) }))
+      wins: METHODS.map(([m, label]) => ({ label, onClick: () => this.up(n => this.declare(n, k, label, 'VENCEU por ' + label.toLowerCase())) }))
     };
   }
   renderVals() {
@@ -289,6 +323,8 @@ class Component extends DCLogic {
     let leader = 'Empate';
     const cmp = (sw - sb) || (s.w.adv - s.b.adv) || (s.b.pen - s.w.pen);
     if (cmp > 0) leader = nm('w'); else if (cmp < 0) leader = nm('b');
+    const win = s.winner, isWin = !!win && (win.side === 'w' || win.side === 'b');
+    const isDraw = !!win && !isWin, isDecision = isDraw && win.side === 'decision';
     const custom = s.cMin*60 + s.cSec;
     const active = '#eceae6', idle = 'transparent';
     return {
@@ -306,11 +342,19 @@ class Component extends DCLogic {
       onCustomSec: e => { const v = Math.max(0, Math.min(59, parseInt(e.target.value)||0)); this.up(n => { n.cSec = v; }, false); },
       setCustom: () => this.up(n => { const d = n.cMin*60 + n.cSec; if (d > 0) { n.dur = d; n.remaining = d; n.running = false; } }),
       dcBg: s.dur !== 240 && s.dur === custom ? active : idle, dcFg: s.dur !== 240 && s.dur === custom ? '#101114' : '#eceae6',
-      hasWinner: !!s.winner,
-      winnerName: s.winner ? nm(s.winner.side).toUpperCase() : '',
-      winnerMethod: s.winner ? s.winner.method : '',
+      hasWinner: isWin,
+      winnerName: isWin ? nm(win.side).toUpperCase() : '',
+      winnerMethod: isWin ? win.method : '',
       blinkOp: this.blink ? 1 : 0.25,
       clearWinner: () => this.up(n => { n.winner = null; }),
+      hasDraw: isDraw, isDecision,
+      drawTitle: isDecision ? 'EMPATE — AGUARDANDO DECISÃO DOS ÁRBITROS' : 'EMPATE — AMBOS VENCEDORES: ' + nm('w').toUpperCase() + ' E ' + nm('b').toUpperCase(),
+      drawBlink: isDecision && !this.blink ? 0.25 : 1,
+      decideW: () => this.up(n => this.declare(n, 'w', 'Decisão', 'VENCEU por decisão dos árbitros')),
+      decideB: () => this.up(n => this.declare(n, 'b', 'Decisão', 'VENCEU por decisão dos árbitros')),
+      decideWLabel: nm('w').toUpperCase() + ' VENCE', decideBLabel: nm('b').toUpperCase() + ' VENCE',
+      setBoth: () => this.up(n => this.declare(n, 'both', 'Empate', 'empate — ambos vencedores')),
+      setDecision: () => this.up(n => this.declare(n, 'decision', 'Decisão dos árbitros', 'empate — aguardando decisão dos árbitros')),
       saver: !!s.saver,
       toggleSaver: () => this.up(n => { n.saver = !n.saver; }, false),
       saverLabel: s.saver ? '● Tela de proteção: LIGADA' : '○ Tela de proteção',
@@ -325,17 +369,21 @@ class Component extends DCLogic {
       undo: () => { const p = this.hist.pop(); if (p) { const o = JSON.parse(p); o.running = this.state.running; o.anchor = this.state.anchor; o.remaining = this.state.remaining; this.setState(o, () => this.save()); } },
       undoOp: this.hist.length ? 1 : 0.4,
       newFight: () => this.setState({ confirm: 'new' }),
+      swapFighters: () => this.setState({ confirm: 'swap' }),
       stop: e => e.stopPropagation(),
       hasConfirm: !!this.state.confirm,
-      confirmTitle: this.state.confirm === 'new' ? 'Iniciar nova luta?' : 'Zerar o tempo?',
-      confirmText: this.state.confirm === 'new' ? 'Pontos, vantagens, punições, nomes, vencedor, histórico e tempo serão zerados.' : 'O cronômetro volta para ' + fmt(s.dur) + ' e fica parado. A pontuação é mantida.',
-      confirmLabel: this.state.confirm === 'new' ? 'Sim, nova luta' : 'Sim, zerar tempo',
+      ...({
+        new: { confirmTitle: 'Iniciar nova luta?', confirmText: 'Pontos, vantagens, punições, nomes, vencedor, histórico e tempo serão zerados.', confirmLabel: 'Sim, nova luta' },
+        reset: { confirmTitle: 'Zerar o tempo?', confirmText: 'O cronômetro volta para ' + fmt(s.dur) + ' e fica parado. A pontuação é mantida.', confirmLabel: 'Sim, zerar tempo' },
+        swap: { confirmTitle: 'Trocar os lutadores de lado?', confirmText: nm('w') + ' vai para o lado AZUL e ' + nm('b') + ' vai para o lado BRANCO. Cada um leva seu nome, equipe, pontos, vantagens e punições. O tempo não muda.', confirmLabel: '⇆ Sim, trocar' }
+      }[this.state.confirm] || {}),
+      confirmBg: this.state.confirm === 'swap' ? '#eceae6' : '#c62f25', confirmFg: this.state.confirm === 'swap' ? '#101114' : '#ffffff',
       cancelConfirm: () => this.setState({ confirm: null }),
-      doConfirm: () => { const c = this.state.confirm; this.setState({ confirm: null }); if (c === 'new') this.up(n => { n.w = fighter(); n.b = fighter(); n.winner = null; n.log = []; n.running = false; n.remaining = n.dur; delete n.confirm; }); else this.up(n => { n.running = false; n.remaining = n.dur; delete n.confirm; }); },
+      doConfirm: () => { const c = this.state.confirm; this.setState({ confirm: null }); if (c === 'new') this.up(n => { n.w = fighter(); n.b = fighter(); n.winner = null; n.log = []; n.running = false; n.remaining = n.dur; delete n.confirm; }); else if (c === 'swap') this.up(n => { this.swapSides(n); delete n.confirm; }); else this.up(n => { n.running = false; n.remaining = n.dur; delete n.confirm; }); },
       openMonitor: () => window.open('/monitor', 'placar-monitor'),
       w: this.side('w'), b: this.side('b'),
       hasLog: (s.log || []).length > 0, noLog: !(s.log || []).length,
-      logRows: (s.log || []).slice().reverse().map((e, i, a) => ({ n: a.length - i, t: e.t, who: e.who, text: e.text, score: e.sw + ' × ' + e.sb, dot: e.k === 'w' ? '#f3f2ee' : '#3f6fe0', fg: e.add ? '#eceae6' : '#a6a6ac' })),
+      logRows: (s.log || []).slice().reverse().map((e, i, a) => ({ n: a.length - i, t: e.t, who: e.who, text: e.text, score: e.sw + ' × ' + e.sb, dot: e.k === 'w' ? '#f3f2ee' : (e.k === 'b' ? '#3f6fe0' : '#f07a12'), fg: e.add ? '#eceae6' : '#a6a6ac' })),
       clearLog: () => this.up(n => { n.log = []; })
     };
   }

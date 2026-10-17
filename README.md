@@ -28,4 +28,10 @@ python -m http.server 8000
 2. Clique em **Abrir monitor ↗** e arraste a janela para o monitor estendido.
 3. Clique em **Tela cheia** (ou F11).
 
+## Empate
+
+- **Fim do tempo empatado** (pontos, vantagens e punições iguais) — o monitor mostra "EMPATE · DECISÃO DOS ÁRBITROS". No operador aparecem os botões para declarar quem venceu; ao clicar, o monitor mostra o vencedor (nome, ou a cor se o nome estiver vazio) "por decisão".
+- **🏆 Empate · ambos vencedores** — encerra a luta com os dois atletas vencedores (ex.: lutas infantis). O monitor mostra "VENCEDORES" com os dois nomes.
+- **⚖ Empate · decisão dos árbitros** — leva a luta para decisão manualmente, a qualquer momento.
+
 Para trocar a arte do evento, substitua `assets/arte-campeonato.png`.

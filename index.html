@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;background:#101114;color:#eceae6;font-family:'Barlow',Helvetica,sans-serif;}
+*{box-sizing:border-box;}
+a{color:#9db4ff;}a:hover{color:#c9d6ff;}
+input::placeholder{color:currentColor;opacity:.45;}
+button{font-family:inherit;cursor:pointer;}
+</style>
+</helmet>
+<div style="min-height:100vh;display:flex;flex-direction:column;gap:12px;padding:14px 16px;">
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+    <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;letter-spacing:.04em;">PLACAR BJJ <span style="color:#8a8a90;font-weight:600;">· OPERADOR</span></div>
+    <input value="{{ cat }}" onChange="{{ onCat }}" placeholder="Categoria (ex: Adulto · Faixa Preta · Leve)" style="flex:1;min-width:220px;height:40px;padding:0 12px;border-radius:8px;border:1px solid #2c2e34;background:#1a1b20;color:#eceae6;font-size:15px;outline:none;">
+    <button onClick="{{ undo }}" style="height:40px;padding:0 14px;border-radius:8px;border:1px solid #2c2e34;background:#1a1b20;color:#eceae6;font-size:14px;font-weight:600;opacity:{{ undoOp }};">↶ Desfazer</button>
+    <button onClick="{{ toggleFlipOp }}" style="height:40px;padding:0 14px;border-radius:8px;border:1px solid #2c2e34;background:{{ flipOpBg }};color:#eceae6;font-size:14px;font-weight:600;">⇄ Inverter · Operador</button>
+    <button onClick="{{ toggleFlipMon }}" style="height:40px;padding:0 14px;border-radius:8px;border:1px solid #2c2e34;background:{{ flipMonBg }};color:#eceae6;font-size:14px;font-weight:600;">⇄ Inverter · Monitor</button>
+    <button onClick="{{ toggleSound }}" style="height:40px;padding:0 14px;border-radius:8px;border:1px solid #2c2e34;background:#1a1b20;color:#eceae6;font-size:14px;font-weight:600;">{{ soundLabel }}</button>
+    <button onClick="{{ newFight }}" style="height:40px;padding:0 14px;border-radius:8px;border:1px solid #2c2e34;background:#1a1b20;color:#eceae6;font-size:14px;font-weight:600;">Nova luta</button>
+    <button onClick="{{ toggleSaver }}" style="height:40px;padding:0 14px;border-radius:8px;border:{{ saverBorder }};background:{{ saverBg }};color:{{ saverFg }};font-size:14px;font-weight:700;">{{ saverLabel }}</button>
+    <button onClick="{{ openMonitor }}" style="height:40px;padding:0 16px;border-radius:8px;border:none;background:#eceae6;color:#101114;font-size:14px;font-weight:700;">Abrir monitor ↗</button>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:#1a1b20;border:1px solid #2c2e34;border-radius:12px;padding:10px 16px;">
+    <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:64px;line-height:1;font-variant-numeric:tabular-nums;min-width:150px;color:{{ timeColor }};">{{ time }}</div>
+    <button onClick="{{ togglePlay }}" style="height:56px;min-width:170px;padding:0 20px;border-radius:10px;border:none;background:{{ playBg }};color:#101114;font-size:18px;font-weight:700;">{{ playLabel }}</button>
+    <button onClick="{{ resetTime }}" style="height:56px;padding:0 16px;border-radius:10px;border:1px solid #3a3c43;background:transparent;color:#eceae6;font-size:15px;font-weight:600;">↺ Zerar tempo</button>
+    <div style="display:flex;flex-direction:column;gap:2px;font-size:14px;color:#a6a6ac;">
+      <div>Lidera: <b style="color:#eceae6;">{{ leader }}</b></div>
+      <div style="font-size:12px;">Desempate: pontos → vantagens → menos punições → decisão</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;margin-left:auto;">
+      <span style="font-size:13px;color:#8a8a90;">Duração</span>
+      <button onClick="{{ set4 }}" style="height:40px;padding:0 12px;border-radius:8px;border:1px solid #3a3c43;background:{{ d4Bg }};color:{{ d4Fg }};font-size:15px;font-weight:700;">4 min</button>
+      <input type="number" min="1" max="30" value="{{ customMin }}" onChange="{{ onCustomMin }}" style="width:60px;height:40px;padding:0 8px;border-radius:8px;border:1px solid #3a3c43;background:#101114;color:#eceae6;font-size:15px;outline:none;">
+      <span style="font-size:13px;color:#8a8a90;">min</span>
+      <input type="number" min="0" max="59" value="{{ customSec }}" onChange="{{ onCustomSec }}" style="width:60px;height:40px;padding:0 8px;border-radius:8px;border:1px solid #3a3c43;background:#101114;color:#eceae6;font-size:15px;outline:none;">
+      <span style="font-size:13px;color:#8a8a90;">s</span>
+      <button onClick="{{ setCustom }}" style="height:40px;padding:0 12px;border-radius:8px;border:1px solid #3a3c43;background:{{ dcBg }};color:{{ dcFg }};font-size:15px;font-weight:700;">Aplicar</button>
+    </div>
+  </div>
+
+  <sc-if value="{{ saver }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:12px 16px;border-radius:12px;background:#f07a12;color:#101114;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;letter-spacing:.04em;">TELA DE PROTEÇÃO ATIVA NO MONITOR — o placar está oculto</div>
+      <button onClick="{{ toggleSaver }}" style="margin-left:auto;height:40px;padding:0 14px;border-radius:8px;border:none;background:#101114;color:#ffffff;font-size:14px;font-weight:700;">Mostrar placar</button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ hasWinner }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:12px 16px;border-radius:12px;background:#f2c94c;color:#101114;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:26px;letter-spacing:.02em;opacity:{{ blinkOp }};">VENCEDOR: {{ winnerName }} — {{ winnerMethod }}</div>
+      <button onClick="{{ clearWinner }}" style="margin-left:auto;height:40px;padding:0 14px;border-radius:8px;border:1.5px solid #101114;background:transparent;color:#101114;font-size:14px;font-weight:700;">Remover vencedor</button>
+    </div>
+  </sc-if>
+
+  <div style="flex:1;display:flex;flex-direction:{{ opDir }};gap:12px;flex-wrap:wrap;">
+    <div style="flex:1 1 440px;min-width:0;display:flex;flex-direction:column;gap:10px;background:#f3f2ee;color:#15161a;border-radius:14px;padding:14px;">
+      <div style="display:flex;gap:12px;align-items:stretch;">
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:.12em;color:#6b6a66;">LADO BRANCO</div>
+          <input value="{{ w.name }}" onChange="{{ w.onName }}" placeholder="Nome do lutador" style="height:44px;padding:0 10px;border-radius:8px;border:1px solid #d6d4cd;background:#fff;color:#15161a;font-size:20px;font-weight:700;outline:none;width:100%;">
+          <input value="{{ w.team }}" onChange="{{ w.onTeam }}" placeholder="Equipe / academia" style="height:34px;padding:0 10px;border-radius:8px;border:1px solid #d6d4cd;background:#fff;color:#15161a;font-size:14px;outline:none;width:100%;">
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;justify-content:center;min-width:120px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:92px;line-height:1;font-variant-numeric:tabular-nums;">{{ w.score }}</div>
+          <div style="font-size:14px;font-weight:700;color:#55544f;">V {{ w.adv }} · P {{ w.pen }}</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;background:#ffffff;border:1px solid #e1dfd8;border-radius:12px;padding:10px;">
+        <div style="grid-column:1 / -1;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;letter-spacing:.12em;color:#6b6a66;">PONTOS</div>
+        <sc-for list="{{ w.pts }}" as="p" hint-placeholder-count="3">
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <button onClick="{{ p.inc }}" style="height:100px;border-radius:10px;border:none;background:#15161a;color:#f3f2ee;font-family:'Barlow Condensed',sans-serif;font-size:56px;font-weight:800;line-height:1;">{{ p.add }}</button>
+            <button onClick="{{ p.dec }}" style="height:52px;border-radius:10px;border:2px solid #c9c7bf;background:transparent;color:#15161a;font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:700;">{{ p.sub }}</button>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;">
+        <div style="display:flex;flex-direction:column;gap:6px;background:#ffffff;border:1px solid #e1dfd8;border-radius:12px;padding:10px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;letter-spacing:.12em;color:#6b6a66;">VANTAGEM</div>
+          <div style="display:grid;grid-template-columns:2fr 1fr;gap:6px;">
+            <button onClick="{{ w.advInc }}" style="height:80px;border-radius:10px;border:none;background:#d9a321;color:#15161a;font-family:'Barlow Condensed',sans-serif;font-size:44px;font-weight:800;">+1</button>
+            <button onClick="{{ w.advDec }}" style="height:80px;border-radius:10px;border:2px solid #d9a321;background:transparent;color:#15161a;font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:700;">−1</button>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;background:#ffffff;border:1px solid #e1dfd8;border-radius:12px;padding:10px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;letter-spacing:.12em;color:#6b6a66;">PUNIÇÃO</div>
+          <div style="display:grid;grid-template-columns:2fr 1fr;gap:6px;">
+            <button onClick="{{ w.penInc }}" style="height:80px;border-radius:10px;border:none;background:#c62f25;color:#ffffff;font-family:'Barlow Condensed',sans-serif;font-size:44px;font-weight:800;">+1</button>
+            <button onClick="{{ w.penDec }}" style="height:80px;border-radius:10px;border:2px solid #c62f25;background:transparent;color:#15161a;font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:700;">−1</button>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:auto;padding-top:6px;border-top:1px solid #dddbd3;">
+        <span style="font-size:13px;font-weight:700;color:#6b6a66;margin-right:4px;">VENCE POR</span>
+        <sc-for list="{{ w.wins }}" as="m" hint-placeholder-count="5">
+          <button onClick="{{ m.onClick }}" style="height:40px;padding:0 12px;border-radius:8px;border:1.5px solid #15161a;background:transparent;color:#15161a;font-size:14px;font-weight:700;">{{ m.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="flex:1 1 440px;min-width:0;display:flex;flex-direction:column;gap:10px;background:#1c3f99;color:#ffffff;border-radius:14px;padding:14px;">
+      <div style="display:flex;gap:12px;align-items:stretch;">
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:.12em;color:#c3d0f2;">LADO AZUL</div>
+          <input value="{{ b.name }}" onChange="{{ b.onName }}" placeholder="Nome do lutador" style="height:44px;padding:0 10px;border-radius:8px;border:1px solid #4b6bc2;background:#15327d;color:#ffffff;font-size:20px;font-weight:700;outline:none;width:100%;">
+          <input value="{{ b.team }}" onChange="{{ b.onTeam }}" placeholder="Equipe / academia" style="height:34px;padding:0 10px;border-radius:8px;border:1px solid #4b6bc2;background:#15327d;color:#ffffff;font-size:14px;outline:none;width:100%;">
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;justify-content:center;min-width:120px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:92px;line-height:1;font-variant-numeric:tabular-nums;">{{ b.score }}</div>
+          <div style="font-size:14px;font-weight:700;color:#c3d0f2;">V {{ b.adv }} · P {{ b.pen }}</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;background:#15327d;border:1px solid #2f52ad;border-radius:12px;padding:10px;">
+        <div style="grid-column:1 / -1;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;letter-spacing:.12em;color:#c3d0f2;">PONTOS</div>
+        <sc-for list="{{ b.pts }}" as="p" hint-placeholder-count="3">
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <button onClick="{{ p.inc }}" style="height:100px;border-radius:10px;border:none;background:#ffffff;color:#1c3f99;font-family:'Barlow Condensed',sans-serif;font-size:56px;font-weight:800;line-height:1;">{{ p.add }}</button>
+            <button onClick="{{ p.dec }}" style="height:52px;border-radius:10px;border:2px solid #6f8ad0;background:transparent;color:#ffffff;font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:700;">{{ p.sub }}</button>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;">
+        <div style="display:flex;flex-direction:column;gap:6px;background:#15327d;border:1px solid #2f52ad;border-radius:12px;padding:10px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;letter-spacing:.12em;color:#c3d0f2;">VANTAGEM</div>
+          <div style="display:grid;grid-template-columns:2fr 1fr;gap:6px;">
+            <button onClick="{{ b.advInc }}" style="height:80px;border-radius:10px;border:none;background:#d9a321;color:#15161a;font-family:'Barlow Condensed',sans-serif;font-size:44px;font-weight:800;">+1</button>
+            <button onClick="{{ b.advDec }}" style="height:80px;border-radius:10px;border:2px solid #d9a321;background:transparent;color:#ffffff;font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:700;">−1</button>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;background:#15327d;border:1px solid #2f52ad;border-radius:12px;padding:10px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;letter-spacing:.12em;color:#c3d0f2;">PUNIÇÃO</div>
+          <div style="display:grid;grid-template-columns:2fr 1fr;gap:6px;">
+            <button onClick="{{ b.penInc }}" style="height:80px;border-radius:10px;border:none;background:#c62f25;color:#ffffff;font-family:'Barlow Condensed',sans-serif;font-size:44px;font-weight:800;">+1</button>
+            <button onClick="{{ b.penDec }}" style="height:80px;border-radius:10px;border:2px solid #c62f25;background:transparent;color:#ffffff;font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:700;">−1</button>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:auto;padding-top:6px;border-top:1px solid #3a5cb3;">
+        <span style="font-size:13px;font-weight:700;color:#c3d0f2;margin-right:4px;">VENCE POR</span>
+        <sc-for list="{{ b.wins }}" as="m" hint-placeholder-count="5">
+          <button onClick="{{ m.onClick }}" style="height:40px;padding:0 12px;border-radius:8px;border:1.5px solid #ffffff;background:transparent;color:#ffffff;font-size:14px;font-weight:700;">{{ m.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:8px;background:#1a1b20;border:1px solid #2c2e34;border-radius:12px;padding:12px 16px;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;letter-spacing:.08em;">HISTÓRICO DA PONTUAÇÃO</div>
+      <button onClick="{{ clearLog }}" style="margin-left:auto;height:32px;padding:0 12px;border-radius:8px;border:1px solid #3a3c43;background:transparent;color:#a6a6ac;font-size:13px;font-weight:600;">Limpar</button>
+    </div>
+    <sc-if value="{{ noLog }}" hint-placeholder-val="{{ true }}">
+      <div style="font-size:14px;color:#77777d;">Nenhum registro ainda.</div>
+    </sc-if>
+    <div style="display:flex;flex-direction:column;max-height:220px;overflow:auto;">
+      <sc-for list="{{ logRows }}" as="e" hint-placeholder-count="0">
+        <div style="display:grid;grid-template-columns:36px 56px 14px minmax(0,1fr) auto;align-items:center;gap:10px;padding:7px 0;border-top:1px solid #26282e;font-size:15px;color:{{ e.fg }};">
+          <span style="color:#77777d;font-size:13px;">#{{ e.n }}</span>
+          <span style="font-variant-numeric:tabular-nums;color:#a6a6ac;">{{ e.t }}</span>
+          <span style="width:12px;height:12px;border-radius:50%;background:{{ e.dot }};border:1px solid #55575e;"></span>
+          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><b>{{ e.who }}</b> · {{ e.text }}</span>
+          <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:17px;color:#a6a6ac;font-variant-numeric:tabular-nums;">{{ e.score }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+  <sc-if value="{{ hasConfirm }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ cancelConfirm }}" style="position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(5,6,8,.72);">
+      <div onClick="{{ stop }}" style="width:100%;max-width:440px;display:flex;flex-direction:column;gap:14px;background:#1a1b20;border:1px solid #3a3c43;border-radius:14px;padding:22px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:30px;line-height:1.05;">{{ confirmTitle }}</div>
+        <div style="font-size:16px;color:#c9c8c3;line-height:1.4;text-wrap:pretty;">{{ confirmText }}</div>
+        <div style="display:flex;gap:10px;margin-top:6px;">
+          <button onClick="{{ cancelConfirm }}" style="flex:1;height:56px;border-radius:10px;border:1px solid #3a3c43;background:transparent;color:#eceae6;font-size:17px;font-weight:700;">Cancelar</button>
+          <button onClick="{{ doConfirm }}" style="flex:1;height:56px;border-radius:10px;border:none;background:#c62f25;color:#ffffff;font-size:17px;font-weight:700;">{{ confirmLabel }}</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+  <div style="font-size:12px;color:#77777d;">4ª punição = desclassificação. Abra o monitor na tela estendida e pressione F11.</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const KEY = 'bjj-placar-v2';
+const TYPES = [['p2','+2',2],['p3','+3',3],['p4','+4',4]];
+const METHODS = [['finalizacao','Finalização'],['desistencia','Desistência do oponente'],['pontos','Pontos'],['decisao','Decisão'],['dq','Desclassificação do oponente']];
+const fighter = (name='', team='') => ({ name, team, c: { p2:0, p3:0, p4:0 }, adv:0, pen:0 });
+const defaults = () => ({ cat:'', dur:240, remaining:240, running:false, anchor:0, flipOp:false, flipMon:false, sound:true, w:fighter(), b:fighter(), winner:null, cMin:4, cSec:0, log:[] });
+const score = f => TYPES.reduce((s,[k,,p]) => s + f.c[k]*p, 0);
+const fmt = t => { t = Math.ceil(t); return Math.floor(t/60) + ':' + String(t%60).padStart(2,'0'); };
+
+class Component extends DCLogic {
+  constructor(p) {
+    super(p);
+    let s = null;
+    try { s = JSON.parse(localStorage.getItem(KEY)); } catch(e) {}
+    this.state = Object.assign(defaults(), s || {});
+    this.hist = [];
+    this.blink = true;
+  }
+  componentDidMount() {
+    try { this.ch = new BroadcastChannel('bjj-placar'); } catch(e) {}
+    this.t = setInterval(() => this.tick(), 200);
+    this.bl = setInterval(() => { this.blink = !this.blink; if (this.state.winner) this.forceUpdate(); }, 500);
+    this.save();
+  }
+  componentWillUnmount() { clearInterval(this.t); clearInterval(this.bl); }
+  save() {
+    try { localStorage.setItem(KEY, JSON.stringify(this.state)); } catch(e) {}
+    if (this.ch) this.ch.postMessage(this.state);
+  }
+  now(s = this.state) { return s.running ? Math.max(0, s.remaining - (Date.now() - s.anchor)/1000) : s.remaining; }
+  up(fn, undoable = true) {
+    if (undoable) { this.hist.push(JSON.stringify(this.state)); if (this.hist.length > 200) this.hist.shift(); }
+    const n = JSON.parse(JSON.stringify(this.state));
+    fn(n);
+    this.setState(n, () => this.save());
+  }
+  tick() {
+    const s = this.state;
+    if (s.running && this.now() <= 0) {
+      this.up(n => {
+        n.running = false; n.remaining = 0;
+        if (n.winner) return;
+        const dp = score(n.w) - score(n.b), da = n.w.adv - n.b.adv, dn = n.b.pen - n.w.pen;
+        const cmp = dp || da || dn;
+        const method = dp ? 'Pontos' : (da ? 'Vantagens' : 'Menos punições');
+        const entry = { t: '0:00', add: true, sw: score(n.w), sb: score(n.b) };
+        if (cmp) {
+          const k = cmp > 0 ? 'w' : 'b';
+          n.winner = { side: k, method };
+          n.log = (n.log || []).concat([Object.assign(entry, { k, who: n[k].name || (k === 'w' ? 'Branco' : 'Azul'), text: 'VENCEU por ' + method.toLowerCase() + ' (fim do tempo)' })]);
+        } else {
+          n.log = (n.log || []).concat([Object.assign(entry, { k: 'w', who: 'Empate', text: 'fim do tempo — aguardando decisão dos árbitros' })]);
+        }
+      });
+      if (s.sound) this.beep();
+    } else this.forceUpdate();
+  }
+  beep() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      [0, 0.45, 0.9].forEach(t => {
+        const o = ctx.createOscillator(), g = ctx.createGain();
+        o.type = 'square'; o.frequency.value = 880;
+        g.gain.setValueAtTime(0.25, ctx.currentTime + t);
+        g.gain.setValueAtTime(0, ctx.currentTime + t + 0.35);
+        o.connect(g); g.connect(ctx.destination);
+        o.start(ctx.currentTime + t); o.stop(ctx.currentTime + t + 0.36);
+      });
+    } catch(e) {}
+  }
+  log(n, k, text, add) {
+    const nm = n[k].name || (k === 'w' ? 'Branco' : 'Azul');
+    n.log = (n.log || []).concat([{ t: fmt(this.now(n)), k, who: nm, text, add, sw: score(n.w), sb: score(n.b) }]);
+  }
+  pause(n) { if (n.running) { n.remaining = this.now(n); n.running = false; } }
+  side(k) {
+    const f = this.state[k];
+    const rows = TYPES.map(([key, label, p]) => ({
+      label, val: 'pontos', count: f.c[key],
+      inc: () => this.up(n => { n[k].c[key]++; this.log(n, k, '+' + p + ' pontos', true); }),
+      dec: () => this.up(n => { if (n[k].c[key] > 0) { n[k].c[key]--; this.log(n, k, '−' + p + ' pontos (removido)', false); } })
+    }));
+    rows.push({ label:'+1', val:'vantagem', count:f.adv, inc:() => this.up(n => { n[k].adv++; this.log(n, k, '+1 vantagem', true); }), dec:() => this.up(n => { if (n[k].adv > 0) { n[k].adv--; this.log(n, k, '−1 vantagem (removida)', false); } }) });
+    rows.push({ label:'+1', val:'punição', count:f.pen, inc:() => this.up(n => { n[k].pen++; this.log(n, k, '+1 punição', true); }), dec:() => this.up(n => { if (n[k].pen > 0) { n[k].pen--; this.log(n, k, '−1 punição (removida)', false); } }) });
+    return {
+      name: f.name, team: f.team, score: score(f), adv: f.adv, pen: f.pen, rows,
+      pts: rows.slice(0, 3).map((r, i) => ({ add: '+' + TYPES[i][2], sub: '−' + TYPES[i][2], inc: r.inc, dec: r.dec })),
+      advInc: rows[3].inc, advDec: rows[3].dec, penInc: rows[4].inc, penDec: rows[4].dec,
+      onName: e => { const v = e.target.value; this.up(n => { n[k].name = v; }, false); },
+      onTeam: e => { const v = e.target.value; this.up(n => { n[k].team = v; }, false); },
+      wins: METHODS.map(([m, label]) => ({ label, onClick: () => this.up(n => { this.pause(n); n.winner = { side:k, method:label }; const nm = n[k].name || (k === 'w' ? 'Branco' : 'Azul'); n.log = (n.log||[]).concat([{ t: fmt(n.remaining), k, who: nm, text: 'VENCEU por ' + label.toLowerCase(), add: true, sw: score(n.w), sb: score(n.b) }]); }) }))
+    };
+  }
+  renderVals() {
+    const s = this.state, t = this.now();
+    const sw = score(s.w), sb = score(s.b);
+    const nm = k => s[k].name || (k === 'w' ? 'Branco' : 'Azul');
+    let leader = 'Empate';
+    const cmp = (sw - sb) || (s.w.adv - s.b.adv) || (s.b.pen - s.w.pen);
+    if (cmp > 0) leader = nm('w'); else if (cmp < 0) leader = nm('b');
+    const custom = s.cMin*60 + s.cSec;
+    const active = '#eceae6', idle = 'transparent';
+    return {
+      cat: s.cat, onCat: e => { const v = e.target.value; this.up(n => { n.cat = v; }, false); },
+      time: fmt(t), timeColor: t <= 0 ? '#ff6b5e' : (s.running ? '#eceae6' : '#f2c94c'),
+      playLabel: s.running ? '❚❚ Pausar' : (t < s.dur && t > 0 ? '▶ Retomar' : '▶ Iniciar'),
+      playBg: s.running ? '#f2c94c' : '#5fd08a',
+      togglePlay: () => this.up(n => { if (n.running) this.pause(n); else if (n.remaining > 0) { n.running = true; n.anchor = Date.now(); } }, false),
+      resetTime: () => this.setState({ confirm: 'reset' }),
+      leader,
+      set4: () => this.up(n => { n.dur = 240; n.remaining = 240; n.running = false; }),
+      d4Bg: s.dur === 240 ? active : idle, d4Fg: s.dur === 240 ? '#101114' : '#eceae6',
+      customMin: s.cMin, customSec: s.cSec,
+      onCustomMin: e => { const v = Math.max(0, Math.min(30, parseInt(e.target.value)||0)); this.up(n => { n.cMin = v; }, false); },
+      onCustomSec: e => { const v = Math.max(0, Math.min(59, parseInt(e.target.value)||0)); this.up(n => { n.cSec = v; }, false); },
+      setCustom: () => this.up(n => { const d = n.cMin*60 + n.cSec; if (d > 0) { n.dur = d; n.remaining = d; n.running = false; } }),
+      dcBg: s.dur !== 240 && s.dur === custom ? active : idle, dcFg: s.dur !== 240 && s.dur === custom ? '#101114' : '#eceae6',
+      hasWinner: !!s.winner,
+      winnerName: s.winner ? nm(s.winner.side).toUpperCase() : '',
+      winnerMethod: s.winner ? s.winner.method : '',
+      blinkOp: this.blink ? 1 : 0.25,
+      clearWinner: () => this.up(n => { n.winner = null; }),
+      saver: !!s.saver,
+      toggleSaver: () => this.up(n => { n.saver = !n.saver; }, false),
+      saverLabel: s.saver ? '● Tela de proteção: LIGADA' : '○ Tela de proteção',
+      saverBg: s.saver ? '#f07a12' : '#1a1b20', saverFg: s.saver ? '#101114' : '#eceae6',
+      saverBorder: s.saver ? '1px solid #f07a12' : '1px solid #2c2e34',
+      opDir: s.flipOp ? 'row-reverse' : 'row',
+      toggleFlipOp: () => this.up(n => { n.flipOp = !n.flipOp; }, false),
+      toggleFlipMon: () => this.up(n => { n.flipMon = !n.flipMon; }, false),
+      flipOpBg: s.flipOp ? '#3a3c43' : '#1a1b20', flipMonBg: s.flipMon ? '#3a3c43' : '#1a1b20',
+      soundLabel: s.sound ? '🔔 Som ligado' : '🔕 Som desligado',
+      toggleSound: () => this.up(n => { n.sound = !n.sound; }, false),
+      undo: () => { const p = this.hist.pop(); if (p) { const o = JSON.parse(p); o.running = this.state.running; o.anchor = this.state.anchor; o.remaining = this.state.remaining; this.setState(o, () => this.save()); } },
+      undoOp: this.hist.length ? 1 : 0.4,
+      newFight: () => this.setState({ confirm: 'new' }),
+      stop: e => e.stopPropagation(),
+      hasConfirm: !!this.state.confirm,
+      confirmTitle: this.state.confirm === 'new' ? 'Iniciar nova luta?' : 'Zerar o tempo?',
+      confirmText: this.state.confirm === 'new' ? 'Pontos, vantagens, punições, nomes, vencedor, histórico e tempo serão zerados.' : 'O cronômetro volta para ' + fmt(s.dur) + ' e fica parado. A pontuação é mantida.',
+      confirmLabel: this.state.confirm === 'new' ? 'Sim, nova luta' : 'Sim, zerar tempo',
+      cancelConfirm: () => this.setState({ confirm: null }),
+      doConfirm: () => { const c = this.state.confirm; this.setState({ confirm: null }); if (c === 'new') this.up(n => { n.w = fighter(); n.b = fighter(); n.winner = null; n.log = []; n.running = false; n.remaining = n.dur; delete n.confirm; }); else this.up(n => { n.running = false; n.remaining = n.dur; delete n.confirm; }); },
+      openMonitor: () => window.open('/monitor', 'placar-monitor'),
+      w: this.side('w'), b: this.side('b'),
+      hasLog: (s.log || []).length > 0, noLog: !(s.log || []).length,
+      logRows: (s.log || []).slice().reverse().map((e, i, a) => ({ n: a.length - i, t: e.t, who: e.who, text: e.text, score: e.sw + ' × ' + e.sb, dot: e.k === 'w' ? '#f3f2ee' : '#3f6fe0', fg: e.add ? '#eceae6' : '#a6a6ac' })),
+      clearLog: () => this.up(n => { n.log = []; })
+    };
+  }
+}
+</script>
+</body>
+</html>

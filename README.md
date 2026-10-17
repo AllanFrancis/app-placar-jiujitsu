@@ -7,6 +7,21 @@ Placar de luta de Jiu-Jitsu (regras CBJJ) com duas telas:
 
 As duas telas sincronizam automaticamente quando abertas **no mesmo navegador e computador** (BroadcastChannel + localStorage).
 
+## Sem internet
+
+O app funciona offline depois do primeiro acesso com internet:
+
+- React, Babel e as fontes ficam em `vendor/` (nada é carregado de CDN).
+- O service worker (`sw.js`) guarda o app no navegador. Dá para recarregar o operador, recarregar o monitor ou abrir o monitor sem internet.
+- O estado da luta fica no `localStorage`, então recarregar não perde placar nem tempo.
+
+Abra o operador **uma vez com internet** antes do evento, no mesmo navegador que será usado.
+
+## Atalhos do operador
+
+- **Espaço** — iniciar/pausar o cronômetro
+- **Ctrl+Z** — desfazer a última ação
+
 ## Rodar localmente
 
 ```bash

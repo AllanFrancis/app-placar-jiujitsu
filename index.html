@@ -3,52 +3,58 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<script>
+// bibliotecas servidas pelo próprio app (sem depender do unpkg) e cache offline via service worker
+window.__resources = {
+  'https://unpkg.com/react@18.3.1/umd/react.production.min.js': '/vendor/react.production.min.js',
+  'https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js': '/vendor/react-dom.production.min.js',
+  'https://unpkg.com/@babel/standalone@7.29.0/babel.min.js': '/vendor/babel.min.js'
+};
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(function () {});
+</script>
 <script src="/support.js"></script>
 </head>
 <body>
 <x-dc>
 <helmet>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="/vendor/fonts/fonts.css" rel="stylesheet">
 <style>
 html,body{margin:0;background:#101114;color:#eceae6;font-family:'Barlow',Helvetica,sans-serif;}
 *{box-sizing:border-box;}
 a{color:#9db4ff;}a:hover{color:#c9d6ff;}
 input::placeholder{color:currentColor;opacity:.45;}
 button{font-family:inherit;cursor:pointer;}
+.op-grid{flex:1;display:grid;grid-template-columns:minmax(0,1fr) 340px minmax(0,1fr);grid-template-areas:"left mid right";gap:16px;align-items:stretch;}
+.op-mid{grid-area:mid;min-width:0;display:flex;flex-direction:column;gap:12px;}
+@media (max-width:1180px){
+  .op-grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:"mid mid" "left right";}
+  .op-mid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;}
+}
+@media (max-width:760px){
+  .op-grid{grid-template-columns:minmax(0,1fr);grid-template-areas:"mid" "left" "right";}
+  .op-mid{display:flex;align-items:stretch;}
+}
 </style>
 </helmet>
-<div style="min-height:100vh;display:flex;flex-direction:column;gap:12px;padding:14px 16px;">
+<div style="min-height:100vh;display:flex;flex-direction:column;gap:14px;padding:14px 16px;">
   <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-    <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;letter-spacing:.04em;">PLACAR BJJ <span style="color:#8a8a90;font-weight:600;">· OPERADOR</span></div>
-    <input value="{{ cat }}" onChange="{{ onCat }}" placeholder="Categoria (ex: Adulto · Faixa Preta · Leve)" style="flex:1;min-width:220px;height:40px;padding:0 12px;border-radius:8px;border:1px solid #2c2e34;background:#1a1b20;color:#eceae6;font-size:15px;outline:none;">
-    <button onClick="{{ undo }}" style="height:40px;padding:0 14px;border-radius:8px;border:1px solid #2c2e34;background:#1a1b20;color:#eceae6;font-size:14px;font-weight:600;opacity:{{ undoOp }};">↶ Desfazer</button>
-    <button onClick="{{ toggleFlipOp }}" style="height:40px;padding:0 14px;border-radius:8px;border:1px solid #2c2e34;background:{{ flipOpBg }};color:#eceae6;font-size:14px;font-weight:600;">⇄ Inverter · Operador</button>
-    <button onClick="{{ toggleFlipMon }}" style="height:40px;padding:0 14px;border-radius:8px;border:1px solid #2c2e34;background:{{ flipMonBg }};color:#eceae6;font-size:14px;font-weight:600;">⇄ Inverter · Monitor</button>
-    <button onClick="{{ swapFighters }}" style="height:40px;padding:0 14px;border-radius:8px;border:1px solid #2c2e34;background:#1a1b20;color:#eceae6;font-size:14px;font-weight:600;">⇆ Trocar lutadores</button>
-    <button onClick="{{ toggleSound }}" style="height:40px;padding:0 14px;border-radius:8px;border:1px solid #2c2e34;background:#1a1b20;color:#eceae6;font-size:14px;font-weight:600;">{{ soundLabel }}</button>
-    <button onClick="{{ newFight }}" style="height:40px;padding:0 14px;border-radius:8px;border:1px solid #2c2e34;background:#1a1b20;color:#eceae6;font-size:14px;font-weight:600;">Nova luta</button>
-    <button onClick="{{ toggleSaver }}" style="height:40px;padding:0 14px;border-radius:8px;border:{{ saverBorder }};background:{{ saverBg }};color:{{ saverFg }};font-size:14px;font-weight:700;">{{ saverLabel }}</button>
-    <button onClick="{{ openMonitor }}" style="height:40px;padding:0 16px;border-radius:8px;border:none;background:#eceae6;color:#101114;font-size:14px;font-weight:700;">Abrir monitor ↗</button>
-  </div>
-
-  <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:#1a1b20;border:1px solid #2c2e34;border-radius:12px;padding:10px 16px;">
-    <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:64px;line-height:1;font-variant-numeric:tabular-nums;min-width:150px;color:{{ timeColor }};">{{ time }}</div>
-    <button onClick="{{ togglePlay }}" style="height:56px;min-width:170px;padding:0 20px;border-radius:10px;border:none;background:{{ playBg }};color:#101114;font-size:18px;font-weight:700;">{{ playLabel }}</button>
-    <button onClick="{{ resetTime }}" style="height:56px;padding:0 16px;border-radius:10px;border:1px solid #3a3c43;background:transparent;color:#eceae6;font-size:15px;font-weight:600;">↺ Zerar tempo</button>
-    <div style="display:flex;flex-direction:column;gap:2px;font-size:14px;color:#a6a6ac;">
-      <div>Lidera: <b style="color:#eceae6;">{{ leader }}</b></div>
-      <div style="font-size:12px;">Desempate: pontos → vantagens → menos punições → decisão</div>
+    <div style="display:flex;align-items:baseline;gap:8px;margin-right:6px;">
+      <span style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:26px;letter-spacing:.04em;">PLACAR BJJ</span>
+      <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:.18em;color:#8a8a90;">OPERADOR</span>
     </div>
-    <div style="display:flex;align-items:center;gap:6px;margin-left:auto;">
-      <span style="font-size:13px;color:#8a8a90;">Duração</span>
-      <button onClick="{{ set4 }}" style="height:40px;padding:0 12px;border-radius:8px;border:1px solid #3a3c43;background:{{ d4Bg }};color:{{ d4Fg }};font-size:15px;font-weight:700;">4 min</button>
-      <input type="number" min="1" max="30" value="{{ customMin }}" onChange="{{ onCustomMin }}" style="width:60px;height:40px;padding:0 8px;border-radius:8px;border:1px solid #3a3c43;background:#101114;color:#eceae6;font-size:15px;outline:none;">
-      <span style="font-size:13px;color:#8a8a90;">min</span>
-      <input type="number" min="0" max="59" value="{{ customSec }}" onChange="{{ onCustomSec }}" style="width:60px;height:40px;padding:0 8px;border-radius:8px;border:1px solid #3a3c43;background:#101114;color:#eceae6;font-size:15px;outline:none;">
-      <span style="font-size:13px;color:#8a8a90;">s</span>
-      <button onClick="{{ setCustom }}" style="height:40px;padding:0 12px;border-radius:8px;border:1px solid #3a3c43;background:{{ dcBg }};color:{{ dcFg }};font-size:15px;font-weight:700;">Aplicar</button>
+    <button onClick="{{ newFight }}" style="margin-left:auto;height:42px;padding:0 16px;border-radius:8px;border:1px solid #2c2e34;background:#1a1b20;color:#eceae6;font-size:14px;font-weight:700;">Nova luta</button>
+    <div style="display:flex;align-items:center;gap:4px;height:42px;padding:0 4px 0 12px;border-radius:8px;border:1px solid #2c2e34;background:#15161a;">
+      <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:.18em;color:#77777d;margin-right:6px;">MONITOR</span>
+      <button onClick="{{ toggleFlipMon }}" style="height:32px;padding:0 10px;border-radius:6px;border:none;background:{{ flipMonBg }};color:#eceae6;font-size:13px;font-weight:600;">⇄ Inverter</button>
+      <button onClick="{{ toggleSaver }}" style="height:32px;padding:0 10px;border-radius:6px;border:none;background:{{ saverBg }};color:{{ saverFg }};font-size:13px;font-weight:600;">{{ saverLabel }}</button>
+      <button onClick="{{ openMonitor }}" style="height:32px;padding:0 12px;border-radius:6px;border:none;background:#eceae6;color:#101114;font-size:13px;font-weight:700;">Abrir ↗</button>
     </div>
+    <button onClick="{{ toggleSound }}" style="display:flex;align-items:center;gap:8px;height:42px;padding:0 14px;border-radius:8px;border:1px solid #2c2e34;background:#1a1b20;color:#eceae6;font-size:14px;font-weight:600;">
+      <span style="width:8px;height:8px;border-radius:50%;background:{{ soundDot }};"></span>{{ soundLabel }}
+    </button>
   </div>
 
   <sc-if value="{{ saver }}" hint-placeholder-val="{{ false }}">
@@ -76,102 +82,163 @@ button{font-family:inherit;cursor:pointer;}
     </div>
   </sc-if>
 
-  <div style="flex:1;display:flex;flex-direction:{{ opDir }};gap:12px;flex-wrap:wrap;">
-    <div style="flex:1 1 440px;min-width:0;display:flex;flex-direction:column;gap:10px;background:#f3f2ee;color:#15161a;border-radius:14px;padding:14px;">
-      <div style="display:flex;gap:12px;align-items:stretch;">
+  <div class="op-grid">
+    <div style="grid-area:{{ bArea }};min-width:0;display:flex;flex-direction:column;gap:14px;background:#0f3289;color:#ffffff;border-radius:14px;padding:18px 20px;">
+      <div style="display:flex;gap:16px;align-items:flex-start;">
         <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;">
-          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:.12em;color:#6b6a66;">LADO BRANCO</div>
-          <input value="{{ w.name }}" onChange="{{ w.onName }}" placeholder="Nome do lutador" style="height:44px;padding:0 10px;border-radius:8px;border:1px solid #d6d4cd;background:#fff;color:#15161a;font-size:20px;font-weight:700;outline:none;width:100%;">
-          <input value="{{ w.team }}" onChange="{{ w.onTeam }}" placeholder="Equipe / academia" style="height:34px;padding:0 10px;border-radius:8px;border:1px solid #d6d4cd;background:#fff;color:#15161a;font-size:14px;outline:none;width:100%;">
+          <div style="display:flex;align-items:center;gap:7px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:.18em;color:#c3d0f2;">
+            <span style="width:13px;height:13px;border-radius:50%;background:#3f6fe0;border:2px solid #ffffff;"></span>LADO AZUL
+          </div>
+          <input value="{{ b.name }}" onChange="{{ b.onName }}" placeholder="Nome do lutador" style="width:100%;height:48px;padding:0;border:none;border-bottom:2px solid rgba(255,255,255,.22);background:transparent;color:#ffffff;font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:800;outline:none;">
+          <input value="{{ b.team }}" onChange="{{ b.onTeam }}" placeholder="Equipe / academia" style="width:100%;height:30px;padding:0;border:none;background:transparent;color:#c3d0f2;font-size:15px;outline:none;">
         </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;justify-content:center;min-width:120px;">
-          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:92px;line-height:1;font-variant-numeric:tabular-nums;">{{ w.score }}</div>
-          <div style="font-size:14px;font-weight:700;color:#55544f;">V {{ w.adv }} · P {{ w.pen }}</div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:132px;line-height:.9;font-variant-numeric:tabular-nums;">{{ b.score }}</div>
+          <div style="display:flex;gap:6px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:.14em;">
+            <span style="padding:2px 8px;border-radius:4px;background:#d9a321;color:#15161a;">V {{ b.adv }}</span>
+            <span style="padding:2px 8px;border-radius:4px;background:#c62f25;color:#ffffff;">P {{ b.pen }}</span>
+          </div>
         </div>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;background:#ffffff;border:1px solid #e1dfd8;border-radius:12px;padding:10px;">
-        <div style="grid-column:1 / -1;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;letter-spacing:.12em;color:#6b6a66;">PONTOS</div>
-        <sc-for list="{{ w.pts }}" as="p" hint-placeholder-count="3">
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;">
+        <sc-for list="{{ b.pts }}" as="p" hint-placeholder-count="3">
           <div style="display:flex;flex-direction:column;gap:6px;">
-            <button onClick="{{ p.inc }}" style="height:100px;border-radius:10px;border:none;background:#15161a;color:#f3f2ee;font-family:'Barlow Condensed',sans-serif;font-size:56px;font-weight:800;line-height:1;">{{ p.add }}</button>
-            <button onClick="{{ p.dec }}" style="height:52px;border-radius:10px;border:2px solid #c9c7bf;background:transparent;color:#15161a;font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:700;">{{ p.sub }}</button>
+            <button onClick="{{ p.inc }}" style="height:96px;border-radius:10px;border:none;background:#ffffff;color:#0f3289;font-family:'Barlow Condensed',sans-serif;font-size:56px;font-weight:800;line-height:1;">{{ p.add }}</button>
+            <button onClick="{{ p.dec }}" style="height:40px;border-radius:8px;border:1px solid #3f61b8;background:#0b2a75;color:#ffffff;font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;">{{ p.sub }}</button>
           </div>
         </sc-for>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;">
-        <div style="display:flex;flex-direction:column;gap:6px;background:#ffffff;border:1px solid #e1dfd8;border-radius:12px;padding:10px;">
-          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;letter-spacing:.12em;color:#6b6a66;">VANTAGEM</div>
-          <div style="display:grid;grid-template-columns:2fr 1fr;gap:6px;">
-            <button onClick="{{ w.advInc }}" style="height:80px;border-radius:10px;border:none;background:#d9a321;color:#15161a;font-family:'Barlow Condensed',sans-serif;font-size:44px;font-weight:800;">+1</button>
-            <button onClick="{{ w.advDec }}" style="height:80px;border-radius:10px;border:2px solid #d9a321;background:transparent;color:#15161a;font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:700;">−1</button>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;">
+        <div style="display:flex;flex-direction:column;gap:10px;background:#0b2a75;border-radius:12px;padding:12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:.16em;color:#c3d0f2;">VANTAGEM<span style="font-size:26px;line-height:1;letter-spacing:0;color:#f2c94c;">{{ b.adv }}</span></div>
+          <div style="display:grid;grid-template-columns:56px minmax(0,1fr);gap:6px;">
+            <button onClick="{{ b.advDec }}" style="height:60px;border-radius:8px;border:1px solid #3f61b8;background:transparent;color:#ffffff;font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;">−1</button>
+            <button onClick="{{ b.advInc }}" style="height:60px;border-radius:8px;border:none;background:#d9a321;color:#15161a;font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:800;">+1</button>
           </div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:6px;background:#ffffff;border:1px solid #e1dfd8;border-radius:12px;padding:10px;">
-          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;letter-spacing:.12em;color:#6b6a66;">PUNIÇÃO</div>
-          <div style="display:grid;grid-template-columns:2fr 1fr;gap:6px;">
-            <button onClick="{{ w.penInc }}" style="height:80px;border-radius:10px;border:none;background:#c62f25;color:#ffffff;font-family:'Barlow Condensed',sans-serif;font-size:44px;font-weight:800;">+1</button>
-            <button onClick="{{ w.penDec }}" style="height:80px;border-radius:10px;border:2px solid #c62f25;background:transparent;color:#15161a;font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:700;">−1</button>
+        <div style="display:flex;flex-direction:column;gap:10px;background:#0b2a75;border-radius:12px;padding:12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:.16em;color:#c3d0f2;">PUNIÇÃO<span style="font-size:26px;line-height:1;letter-spacing:0;color:#ff7a6e;">{{ b.pen }}</span></div>
+          <div style="display:grid;grid-template-columns:56px minmax(0,1fr);gap:6px;">
+            <button onClick="{{ b.penDec }}" style="height:60px;border-radius:8px;border:1px solid #c62f25;background:transparent;color:#ffffff;font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;">−1</button>
+            <button onClick="{{ b.penInc }}" style="height:60px;border-radius:8px;border:none;background:#c62f25;color:#ffffff;font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:800;">+1</button>
           </div>
         </div>
       </div>
-      <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:auto;padding-top:6px;border-top:1px solid #dddbd3;">
-        <span style="font-size:13px;font-weight:700;color:#6b6a66;margin-right:4px;">VENCE POR</span>
-        <sc-for list="{{ w.wins }}" as="m" hint-placeholder-count="5">
-          <button onClick="{{ m.onClick }}" style="height:40px;padding:0 12px;border-radius:8px;border:1.5px solid #15161a;background:transparent;color:#15161a;font-size:14px;font-weight:700;">{{ m.label }}</button>
-        </sc-for>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:auto;padding-top:14px;border-top:1px solid #2f52ad;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:.18em;color:#c3d0f2;">VENCE POR</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          <sc-for list="{{ b.wins }}" as="m" hint-placeholder-count="5">
+            <button onClick="{{ m.onClick }}" style="height:36px;padding:0 14px;border-radius:999px;border:1.5px solid rgba(255,255,255,.55);background:transparent;color:#ffffff;font-size:13px;font-weight:700;">{{ m.label }}</button>
+          </sc-for>
+        </div>
       </div>
     </div>
 
-    <div style="flex:1 1 440px;min-width:0;display:flex;flex-direction:column;gap:10px;background:#1c3f99;color:#ffffff;border-radius:14px;padding:14px;">
-      <div style="display:flex;gap:12px;align-items:stretch;">
-        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;">
-          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:.12em;color:#c3d0f2;">LADO AZUL</div>
-          <input value="{{ b.name }}" onChange="{{ b.onName }}" placeholder="Nome do lutador" style="height:44px;padding:0 10px;border-radius:8px;border:1px solid #4b6bc2;background:#15327d;color:#ffffff;font-size:20px;font-weight:700;outline:none;width:100%;">
-          <input value="{{ b.team }}" onChange="{{ b.onTeam }}" placeholder="Equipe / academia" style="height:34px;padding:0 10px;border-radius:8px;border:1px solid #4b6bc2;background:#15327d;color:#ffffff;font-size:14px;outline:none;width:100%;">
+    <div class="op-mid">
+      <div style="display:flex;flex-direction:column;gap:12px;background:#1a1b20;border:1px solid #2c2e34;border-radius:12px;padding:16px;">
+        <div style="display:flex;justify-content:space-between;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.18em;color:#8a8a90;">
+          <span>TEMPO</span><span style="color:{{ statusColor }};">{{ status }}</span>
         </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;justify-content:center;min-width:120px;">
-          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:92px;line-height:1;font-variant-numeric:tabular-nums;">{{ b.score }}</div>
-          <div style="font-size:14px;font-weight:700;color:#c3d0f2;">V {{ b.adv }} · P {{ b.pen }}</div>
-        </div>
+        <div style="text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:108px;line-height:1;font-variant-numeric:tabular-nums;color:{{ timeColor }};">{{ time }}</div>
+        <button onClick="{{ togglePlay }}" style="height:60px;border-radius:10px;border:none;background:{{ playBg }};color:#101114;font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;letter-spacing:.06em;">{{ playLabel }}</button>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;background:#15327d;border:1px solid #2f52ad;border-radius:12px;padding:10px;">
-        <div style="grid-column:1 / -1;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;letter-spacing:.12em;color:#c3d0f2;">PONTOS</div>
-        <sc-for list="{{ b.pts }}" as="p" hint-placeholder-count="3">
-          <div style="display:flex;flex-direction:column;gap:6px;">
-            <button onClick="{{ p.inc }}" style="height:100px;border-radius:10px;border:none;background:#ffffff;color:#1c3f99;font-family:'Barlow Condensed',sans-serif;font-size:56px;font-weight:800;line-height:1;">{{ p.add }}</button>
-            <button onClick="{{ p.dec }}" style="height:52px;border-radius:10px;border:2px solid #6f8ad0;background:transparent;color:#ffffff;font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:700;">{{ p.sub }}</button>
+
+      <div style="display:flex;flex-direction:column;gap:6px;background:#1a1b20;border:1px solid #2c2e34;border-radius:12px;padding:16px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.18em;color:#8a8a90;">LIDERANDO</div>
+        <div style="display:flex;align-items:center;gap:10px;min-width:0;">
+          <span style="flex:none;width:12px;height:12px;border-radius:50%;background:{{ leaderDot }};"></span>
+          <span style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:30px;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ leader }}</span>
+        </div>
+        <div style="font-size:14px;color:#a6a6ac;">{{ leaderSub }}</div>
+        <div style="font-size:12px;color:#77777d;">Desempate: pontos → vantagens → menos punições → decisão</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;background:#1a1b20;border:1px solid #2c2e34;border-radius:12px;padding:16px;">
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.18em;color:#8a8a90;">DURAÇÃO</div>
+          <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;">
+            <sc-for list="{{ presets }}" as="d" hint-placeholder-count="6">
+              <button onClick="{{ d.onClick }}" style="height:36px;border-radius:6px;border:1px solid #3a3c43;background:{{ d.bg }};color:{{ d.fg }};font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;">{{ d.label }}</button>
+            </sc-for>
           </div>
-        </sc-for>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <input type="number" min="1" max="30" value="{{ customMin }}" onChange="{{ onCustomMin }}" style="flex:1;min-width:0;height:36px;padding:0 10px;border-radius:6px;border:1px solid #3a3c43;background:#101114;color:#eceae6;font-size:15px;outline:none;">
+            <span style="font-size:13px;color:#8a8a90;">min</span>
+            <input type="number" min="0" max="59" value="{{ customSec }}" onChange="{{ onCustomSec }}" style="flex:1;min-width:0;height:36px;padding:0 10px;border-radius:6px;border:1px solid #3a3c43;background:#101114;color:#eceae6;font-size:15px;outline:none;">
+            <span style="font-size:13px;color:#8a8a90;">s</span>
+            <button onClick="{{ setCustom }}" style="height:36px;padding:0 14px;border-radius:6px;border:none;background:#eceae6;color:#101114;font-size:14px;font-weight:700;">Aplicar</button>
+          </div>
+          <button onClick="{{ resetTime }}" style="height:38px;margin-top:4px;border-radius:8px;border:1px solid #5a2a27;background:transparent;color:#ff8a7e;font-size:14px;font-weight:600;">↺ Zerar tempo</button>
+        </div>
+        <div style="display:flex;justify-content:center;gap:16px;font-size:12px;color:#77777d;">
+          <span>Espaço · iniciar/pausar</span><span>Ctrl+Z · desfazer</span>
+        </div>
       </div>
+
       <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;">
-        <div style="display:flex;flex-direction:column;gap:6px;background:#15327d;border:1px solid #2f52ad;border-radius:12px;padding:10px;">
-          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;letter-spacing:.12em;color:#c3d0f2;">VANTAGEM</div>
-          <div style="display:grid;grid-template-columns:2fr 1fr;gap:6px;">
-            <button onClick="{{ b.advInc }}" style="height:80px;border-radius:10px;border:none;background:#d9a321;color:#15161a;font-family:'Barlow Condensed',sans-serif;font-size:44px;font-weight:800;">+1</button>
-            <button onClick="{{ b.advDec }}" style="height:80px;border-radius:10px;border:2px solid #d9a321;background:transparent;color:#ffffff;font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:700;">−1</button>
-          </div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:6px;background:#15327d;border:1px solid #2f52ad;border-radius:12px;padding:10px;">
-          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;letter-spacing:.12em;color:#c3d0f2;">PUNIÇÃO</div>
-          <div style="display:grid;grid-template-columns:2fr 1fr;gap:6px;">
-            <button onClick="{{ b.penInc }}" style="height:80px;border-radius:10px;border:none;background:#c62f25;color:#ffffff;font-family:'Barlow Condensed',sans-serif;font-size:44px;font-weight:800;">+1</button>
-            <button onClick="{{ b.penDec }}" style="height:80px;border-radius:10px;border:2px solid #c62f25;background:transparent;color:#ffffff;font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:700;">−1</button>
-          </div>
-        </div>
+        <button onClick="{{ undo }}" style="grid-column:1 / -1;height:46px;border-radius:10px;border:1px solid #2c2e34;background:#1a1b20;color:#eceae6;font-size:14px;font-weight:700;opacity:{{ undoOp }};">↶ Desfazer última ação</button>
+        <button onClick="{{ swapFighters }}" style="height:46px;border-radius:10px;border:1px solid #2c2e34;background:#1a1b20;color:#eceae6;font-size:14px;font-weight:700;">⇆ Trocar lutadores</button>
+        <button onClick="{{ toggleFlipOp }}" style="height:46px;border-radius:10px;border:1px solid #2c2e34;background:{{ flipOpBg }};color:#eceae6;font-size:14px;font-weight:700;">⇄ Inverter lados</button>
       </div>
-      <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:auto;padding-top:6px;border-top:1px solid #3a5cb3;">
-        <span style="font-size:13px;font-weight:700;color:#c3d0f2;margin-right:4px;">VENCE POR</span>
-        <sc-for list="{{ b.wins }}" as="m" hint-placeholder-count="5">
-          <button onClick="{{ m.onClick }}" style="height:40px;padding:0 12px;border-radius:8px;border:1.5px solid #ffffff;background:transparent;color:#ffffff;font-size:14px;font-weight:700;">{{ m.label }}</button>
-        </sc-for>
+
+      <div style="display:flex;flex-direction:column;gap:10px;background:#1a1b20;border:1px solid #2c2e34;border-radius:12px;padding:16px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:.18em;color:#f2c94c;">EMPATE</div>
+        <button onClick="{{ setBoth }}" style="height:44px;border-radius:8px;border:none;background:#f2c94c;color:#101114;font-size:15px;font-weight:700;">Ambos vencedores</button>
+        <button onClick="{{ setDecision }}" style="height:44px;border-radius:8px;border:1.5px solid #f2c94c;background:transparent;color:#f2c94c;font-size:15px;font-weight:700;">Decisão dos árbitros</button>
+        <div style="font-size:12px;color:#77777d;line-height:1.4;">Se o tempo acabar empatado, vai automaticamente para decisão dos árbitros.</div>
       </div>
     </div>
-  </div>
-  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#1a1b20;border:1px solid #2c2e34;border-radius:12px;padding:10px 16px;">
-    <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;letter-spacing:.08em;margin-right:4px;">EMPATE</div>
-    <button onClick="{{ setBoth }}" style="height:44px;padding:0 16px;border-radius:8px;border:none;background:#f2c94c;color:#101114;font-size:15px;font-weight:700;">🏆 Empate · ambos vencedores</button>
-    <button onClick="{{ setDecision }}" style="height:44px;padding:0 16px;border-radius:8px;border:1.5px solid #f2c94c;background:transparent;color:#f2c94c;font-size:15px;font-weight:700;">⚖ Empate · decisão dos árbitros</button>
-    <span style="margin-left:auto;font-size:12px;color:#8a8a90;max-width:300px;text-align:right;">Se o tempo acabar empatado, a luta vai automaticamente para decisão dos árbitros.</span>
+
+    <div style="grid-area:{{ wArea }};min-width:0;display:flex;flex-direction:column;gap:14px;background:#f3f2ee;color:#15161a;border-radius:14px;padding:18px 20px;">
+      <div style="display:flex;gap:16px;align-items:flex-start;">
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;align-items:center;gap:7px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:.18em;color:#55544f;">
+            <span style="width:13px;height:13px;border-radius:50%;background:#ffffff;border:2px solid #15161a;"></span>LADO BRANCO
+          </div>
+          <input value="{{ w.name }}" onChange="{{ w.onName }}" placeholder="Nome do lutador" style="width:100%;height:48px;padding:0;border:none;border-bottom:2px solid #d6d4cd;background:transparent;color:#15161a;font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:800;outline:none;">
+          <input value="{{ w.team }}" onChange="{{ w.onTeam }}" placeholder="Equipe / academia" style="width:100%;height:30px;padding:0;border:none;background:transparent;color:#55544f;font-size:15px;outline:none;">
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:132px;line-height:.9;font-variant-numeric:tabular-nums;">{{ w.score }}</div>
+          <div style="display:flex;gap:6px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:.14em;">
+            <span style="padding:2px 8px;border-radius:4px;background:#d9a321;color:#15161a;">V {{ w.adv }}</span>
+            <span style="padding:2px 8px;border-radius:4px;background:#c62f25;color:#ffffff;">P {{ w.pen }}</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;">
+        <sc-for list="{{ w.pts }}" as="p" hint-placeholder-count="3">
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <button onClick="{{ p.inc }}" style="height:96px;border-radius:10px;border:none;background:#15161a;color:#f3f2ee;font-family:'Barlow Condensed',sans-serif;font-size:56px;font-weight:800;line-height:1;">{{ p.add }}</button>
+            <button onClick="{{ p.dec }}" style="height:40px;border-radius:8px;border:1px solid #d6d4cd;background:#ffffff;color:#15161a;font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;">{{ p.sub }}</button>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;">
+        <div style="display:flex;flex-direction:column;gap:10px;background:#e4e2dc;border-radius:12px;padding:12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:.16em;color:#55544f;">VANTAGEM<span style="font-size:26px;line-height:1;letter-spacing:0;color:#a87a0e;">{{ w.adv }}</span></div>
+          <div style="display:grid;grid-template-columns:56px minmax(0,1fr);gap:6px;">
+            <button onClick="{{ w.advDec }}" style="height:60px;border-radius:8px;border:1.5px solid #d9a321;background:#ffffff;color:#15161a;font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;">−1</button>
+            <button onClick="{{ w.advInc }}" style="height:60px;border-radius:8px;border:none;background:#d9a321;color:#15161a;font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:800;">+1</button>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;background:#e4e2dc;border-radius:12px;padding:12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:.16em;color:#55544f;">PUNIÇÃO<span style="font-size:26px;line-height:1;letter-spacing:0;color:#c62f25;">{{ w.pen }}</span></div>
+          <div style="display:grid;grid-template-columns:56px minmax(0,1fr);gap:6px;">
+            <button onClick="{{ w.penDec }}" style="height:60px;border-radius:8px;border:1.5px solid #c62f25;background:#ffffff;color:#15161a;font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;">−1</button>
+            <button onClick="{{ w.penInc }}" style="height:60px;border-radius:8px;border:none;background:#c62f25;color:#ffffff;font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:800;">+1</button>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:auto;padding-top:14px;border-top:1px solid #dddbd3;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:.18em;color:#55544f;">VENCE POR</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          <sc-for list="{{ w.wins }}" as="m" hint-placeholder-count="5">
+            <button onClick="{{ m.onClick }}" style="height:36px;padding:0 14px;border-radius:999px;border:1.5px solid #c9c7bf;background:transparent;color:#15161a;font-size:13px;font-weight:700;">{{ m.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
   </div>
   <div style="display:flex;flex-direction:column;gap:8px;background:#1a1b20;border:1px solid #2c2e34;border-radius:12px;padding:12px 16px;">
     <div style="display:flex;align-items:center;gap:10px;">
@@ -223,6 +290,7 @@ class Component extends DCLogic {
     let s = null;
     try { s = JSON.parse(localStorage.getItem(KEY)); } catch(e) {}
     this.state = Object.assign(defaults(), s || {});
+    this.state.cat = ''; // sem campo de categoria no operador: não deixa um valor antigo preso no monitor
     this.hist = [];
     this.blink = true;
   }
@@ -230,9 +298,27 @@ class Component extends DCLogic {
     try { this.ch = new BroadcastChannel('bjj-placar'); } catch(e) {}
     this.t = setInterval(() => this.tick(), 200);
     this.bl = setInterval(() => { this.blink = !this.blink; if (this.state.winner) this.forceUpdate(); }, 500);
+    // atalhos: Espaço inicia/pausa, Ctrl+Z desfaz (fora dos campos de texto e do diálogo de confirmação)
+    this.onKey = e => {
+      const tag = (e.target && e.target.tagName || '').toLowerCase();
+      if (tag === 'input' || tag === 'textarea' || this.state.confirm) return;
+      if (e.code === 'Space') { e.preventDefault(); if (e.type === 'keydown' && !e.repeat) this.togglePlay(); }
+      else if (e.type === 'keydown' && (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); this.undo(); }
+    };
+    document.addEventListener('keydown', this.onKey);
+    document.addEventListener('keyup', this.onKey);
     this.save();
   }
-  componentWillUnmount() { clearInterval(this.t); clearInterval(this.bl); }
+  componentWillUnmount() { clearInterval(this.t); clearInterval(this.bl); document.removeEventListener('keydown', this.onKey); document.removeEventListener('keyup', this.onKey); }
+  // mudar a duração zera o relógio: com a luta já iniciada, pede confirmação
+  setDur(d, m) {
+    const s = this.state;
+    if (s.running || s.remaining !== s.dur) this.setState({ confirm: 'dur', pendingDur: d });
+    else this.up(n => this.applyDur(n, d, m));
+  }
+  applyDur(n, d, m) { n.dur = d; n.remaining = d; n.running = false; if (m) { n.cMin = m; n.cSec = 0; } }
+  togglePlay() { this.up(n => { if (n.running) this.pause(n); else if (n.remaining > 0) { n.running = true; n.anchor = Date.now(); } }, false); }
+  undo() { const p = this.hist.pop(); if (p) { const o = JSON.parse(p); o.running = this.state.running; o.anchor = this.state.anchor; o.remaining = this.state.remaining; this.setState(o, () => this.save()); } }
   save() {
     try { localStorage.setItem(KEY, JSON.stringify(this.state)); } catch(e) {}
     if (this.ch) this.ch.postMessage(this.state);
@@ -320,28 +406,36 @@ class Component extends DCLogic {
     const s = this.state, t = this.now();
     const sw = score(s.w), sb = score(s.b);
     const nm = k => s[k].name || (k === 'w' ? 'Branco' : 'Azul');
-    let leader = 'Empate';
-    const cmp = (sw - sb) || (s.w.adv - s.b.adv) || (s.b.pen - s.w.pen);
-    if (cmp > 0) leader = nm('w'); else if (cmp < 0) leader = nm('b');
+    const dp = sw - sb, da = s.w.adv - s.b.adv, dn = s.b.pen - s.w.pen;
+    const cmp = dp || da || dn;
+    const lead = cmp > 0 ? 'w' : (cmp < 0 ? 'b' : null);
+    const leaderSub = !lead ? 'Placar idêntico'
+      : dp ? 'Na frente por ' + Math.abs(dp) + (Math.abs(dp) === 1 ? ' ponto' : ' pontos')
+      : da ? 'Pontos iguais · desempate por vantagens'
+      : 'Pontos e vantagens iguais · menos punições';
+    const t0 = t <= 0, paused = !s.running && t < s.dur;
     const win = s.winner, isWin = !!win && (win.side === 'w' || win.side === 'b');
     const isDraw = !!win && !isWin, isDecision = isDraw && win.side === 'decision';
-    const custom = s.cMin*60 + s.cSec;
     const active = '#eceae6', idle = 'transparent';
     return {
-      cat: s.cat, onCat: e => { const v = e.target.value; this.up(n => { n.cat = v; }, false); },
       time: fmt(t), timeColor: t <= 0 ? '#ff6b5e' : (s.running ? '#eceae6' : '#f2c94c'),
-      playLabel: s.running ? '❚❚ Pausar' : (t < s.dur && t > 0 ? '▶ Retomar' : '▶ Iniciar'),
+      playLabel: s.running ? '❚❚ PAUSAR' : (t < s.dur && t > 0 ? '▶ RETOMAR' : '▶ INICIAR'),
       playBg: s.running ? '#f2c94c' : '#5fd08a',
-      togglePlay: () => this.up(n => { if (n.running) this.pause(n); else if (n.remaining > 0) { n.running = true; n.anchor = Date.now(); } }, false),
+      togglePlay: () => this.togglePlay(),
+      status: t0 ? 'ENCERRADO' : (s.running ? 'EM ANDAMENTO' : (paused ? 'PAUSADO' : 'PRONTO')),
+      statusColor: t0 ? '#ff6b5e' : (s.running ? '#5fd08a' : (paused ? '#f2c94c' : '#8a8a90')),
       resetTime: () => this.setState({ confirm: 'reset' }),
-      leader,
-      set4: () => this.up(n => { n.dur = 240; n.remaining = 240; n.running = false; }),
-      d4Bg: s.dur === 240 ? active : idle, d4Fg: s.dur === 240 ? '#101114' : '#eceae6',
+      leader: lead ? nm(lead) : 'Empatado', leaderSub,
+      leaderDot: lead === 'w' ? '#f3f2ee' : (lead === 'b' ? '#3f6fe0' : '#f2c94c'),
+      presets: [4, 5, 6, 7, 8, 10].map(m => ({
+        label: m + '′',
+        bg: s.dur === m*60 ? active : idle, fg: s.dur === m*60 ? '#101114' : '#eceae6',
+        onClick: () => this.setDur(m*60, m)
+      })),
       customMin: s.cMin, customSec: s.cSec,
       onCustomMin: e => { const v = Math.max(0, Math.min(30, parseInt(e.target.value)||0)); this.up(n => { n.cMin = v; }, false); },
       onCustomSec: e => { const v = Math.max(0, Math.min(59, parseInt(e.target.value)||0)); this.up(n => { n.cSec = v; }, false); },
-      setCustom: () => this.up(n => { const d = n.cMin*60 + n.cSec; if (d > 0) { n.dur = d; n.remaining = d; n.running = false; } }),
-      dcBg: s.dur !== 240 && s.dur === custom ? active : idle, dcFg: s.dur !== 240 && s.dur === custom ? '#101114' : '#eceae6',
+      setCustom: () => { const d = s.cMin*60 + s.cSec; if (d > 0) this.setDur(d); },
       hasWinner: isWin,
       winnerName: isWin ? nm(win.side).toUpperCase() : '',
       winnerMethod: isWin ? win.method : '',
@@ -357,16 +451,16 @@ class Component extends DCLogic {
       setDecision: () => this.up(n => this.declare(n, 'decision', 'Decisão dos árbitros', 'empate — aguardando decisão dos árbitros')),
       saver: !!s.saver,
       toggleSaver: () => this.up(n => { n.saver = !n.saver; }, false),
-      saverLabel: s.saver ? '● Tela de proteção: LIGADA' : '○ Tela de proteção',
-      saverBg: s.saver ? '#f07a12' : '#1a1b20', saverFg: s.saver ? '#101114' : '#eceae6',
-      saverBorder: s.saver ? '1px solid #f07a12' : '1px solid #2c2e34',
-      opDir: s.flipOp ? 'row-reverse' : 'row',
+      saverLabel: s.saver ? '● Proteção LIGADA' : 'Tela de proteção',
+      saverBg: s.saver ? '#f07a12' : 'transparent', saverFg: s.saver ? '#101114' : '#eceae6',
+      bArea: s.flipOp ? 'right' : 'left', wArea: s.flipOp ? 'left' : 'right',
       toggleFlipOp: () => this.up(n => { n.flipOp = !n.flipOp; }, false),
       toggleFlipMon: () => this.up(n => { n.flipMon = !n.flipMon; }, false),
-      flipOpBg: s.flipOp ? '#3a3c43' : '#1a1b20', flipMonBg: s.flipMon ? '#3a3c43' : '#1a1b20',
-      soundLabel: s.sound ? '🔔 Som ligado' : '🔕 Som desligado',
+      flipOpBg: s.flipOp ? '#3a3c43' : '#1a1b20', flipMonBg: s.flipMon ? '#3a3c43' : 'transparent',
+      soundLabel: s.sound ? 'Som ligado' : 'Som desligado',
+      soundDot: s.sound ? '#5fd08a' : '#55575e',
       toggleSound: () => this.up(n => { n.sound = !n.sound; }, false),
-      undo: () => { const p = this.hist.pop(); if (p) { const o = JSON.parse(p); o.running = this.state.running; o.anchor = this.state.anchor; o.remaining = this.state.remaining; this.setState(o, () => this.save()); } },
+      undo: () => this.undo(),
       undoOp: this.hist.length ? 1 : 0.4,
       newFight: () => this.setState({ confirm: 'new' }),
       swapFighters: () => this.setState({ confirm: 'swap' }),
@@ -374,12 +468,13 @@ class Component extends DCLogic {
       hasConfirm: !!this.state.confirm,
       ...({
         new: { confirmTitle: 'Iniciar nova luta?', confirmText: 'Pontos, vantagens, punições, nomes, vencedor, histórico e tempo serão zerados.', confirmLabel: 'Sim, nova luta' },
+        dur: { confirmTitle: 'Mudar a duração para ' + fmt(this.state.pendingDur || 0) + '?', confirmText: 'A luta já começou. O cronômetro volta para ' + fmt(this.state.pendingDur || 0) + ' e fica parado. A pontuação é mantida.', confirmLabel: 'Sim, mudar duração' },
         reset: { confirmTitle: 'Zerar o tempo?', confirmText: 'O cronômetro volta para ' + fmt(s.dur) + ' e fica parado. A pontuação é mantida.', confirmLabel: 'Sim, zerar tempo' },
         swap: { confirmTitle: 'Trocar os lutadores de lado?', confirmText: nm('w') + ' vai para o lado AZUL e ' + nm('b') + ' vai para o lado BRANCO. Cada um leva seu nome, equipe, pontos, vantagens e punições. O tempo não muda.', confirmLabel: '⇆ Sim, trocar' }
       }[this.state.confirm] || {}),
       confirmBg: this.state.confirm === 'swap' ? '#eceae6' : '#c62f25', confirmFg: this.state.confirm === 'swap' ? '#101114' : '#ffffff',
       cancelConfirm: () => this.setState({ confirm: null }),
-      doConfirm: () => { const c = this.state.confirm; this.setState({ confirm: null }); if (c === 'new') this.up(n => { n.w = fighter(); n.b = fighter(); n.winner = null; n.log = []; n.running = false; n.remaining = n.dur; delete n.confirm; }); else if (c === 'swap') this.up(n => { this.swapSides(n); delete n.confirm; }); else this.up(n => { n.running = false; n.remaining = n.dur; delete n.confirm; }); },
+      doConfirm: () => { const c = this.state.confirm; this.setState({ confirm: null }); if (c === 'new') this.up(n => { n.w = fighter(); n.b = fighter(); n.winner = null; n.log = []; n.running = false; n.remaining = n.dur; delete n.confirm; }); else if (c === 'swap') this.up(n => { this.swapSides(n); delete n.confirm; }); else if (c === 'dur') { const d = this.state.pendingDur; this.up(n => { this.applyDur(n, d, d % 60 ? 0 : d / 60); delete n.confirm; delete n.pendingDur; }); } else this.up(n => { n.running = false; n.remaining = n.dur; delete n.confirm; }); },
       openMonitor: () => window.open('/monitor', 'placar-monitor'),
       w: this.side('w'), b: this.side('b'),
       hasLog: (s.log || []).length > 0, noLog: !(s.log || []).length,

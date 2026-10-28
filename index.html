@@ -28,7 +28,7 @@ a{color:#9db4ff;}a:hover{color:#c9d6ff;}
 input::placeholder{color:currentColor;opacity:.45;}
 button{font-family:inherit;cursor:pointer;}
 .op-grid{flex:1;display:grid;grid-template-columns:minmax(0,1fr) 340px minmax(0,1fr);grid-template-areas:"left mid right";gap:16px;align-items:stretch;}
-.op-mid{grid-area:mid;min-width:0;display:flex;flex-direction:column;gap:12px;}
+.op-mid{grid-area:mid;min-width:0;display:flex;flex-direction:column;gap:10px;}
 @media (max-width:1180px){
   .op-grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:"mid mid" "left right";}
   .op-mid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;}
@@ -58,7 +58,7 @@ button{font-family:inherit;cursor:pointer;}
   </div>
 
   <sc-if value="{{ saver }}" hint-placeholder-val="{{ false }}">
-    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:12px 16px;border-radius:12px;background:#f07a12;color:#101114;">
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:12px 16px;border-radius:12px;background:#46b53a;color:#101114;">
       <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;letter-spacing:.04em;">TELA DE PROTEÇÃO ATIVA NO MONITOR — o placar está oculto</div>
       <button onClick="{{ toggleSaver }}" style="margin-left:auto;height:40px;padding:0 14px;border-radius:8px;border:none;background:#101114;color:#ffffff;font-size:14px;font-weight:700;">Mostrar placar</button>
     </div>
@@ -124,7 +124,7 @@ button{font-family:inherit;cursor:pointer;}
           </div>
         </div>
       </div>
-      <div style="display:flex;flex-direction:column;gap:10px;margin-top:auto;padding-top:14px;border-top:1px solid #2f52ad;">
+      <div style="display:flex;flex-direction:column;gap:10px;padding-top:14px;border-top:1px solid #2f52ad;">
         <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:.18em;color:#c3d0f2;">VENCE POR</div>
         <div style="display:flex;flex-wrap:wrap;gap:6px;">
           <sc-for list="{{ b.wins }}" as="m" hint-placeholder-count="5">
@@ -132,60 +132,73 @@ button{font-family:inherit;cursor:pointer;}
           </sc-for>
         </div>
       </div>
+      <div style="flex:1 1 0;min-height:170px;display:flex;flex-direction:column;gap:6px;background:#0b2a75;border-radius:12px;padding:12px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:.16em;color:#c3d0f2;">HISTÓRICO<span style="letter-spacing:.08em;">{{ b.logCount }}</span></div>
+        <sc-if value="{{ b.noLog }}" hint-placeholder-val="{{ true }}">
+          <div style="font-size:14px;color:#8fa3d6;">Nenhum registro ainda.</div>
+        </sc-if>
+        <div style="flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;">
+          <sc-for list="{{ b.logRows }}" as="e" hint-placeholder-count="0">
+            <div style="display:grid;grid-template-columns:54px minmax(0,1fr) auto;align-items:center;gap:10px;padding:7px 0;border-top:1px solid rgba(255,255,255,.12);font-size:15px;color:{{ e.fg }};">
+              <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;font-variant-numeric:tabular-nums;color:#c3d0f2;">{{ e.t }}</span>
+              <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;">{{ e.text }}</span>
+              <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:17px;font-variant-numeric:tabular-nums;color:#c3d0f2;">{{ e.total }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
     </div>
 
     <div class="op-mid">
-      <div style="display:flex;flex-direction:column;gap:12px;background:#1a1b20;border:1px solid #2c2e34;border-radius:12px;padding:16px;">
+      <div style="display:flex;flex-direction:column;gap:10px;background:#1a1b20;border:1px solid #2c2e34;border-radius:12px;padding:14px;">
         <div style="display:flex;justify-content:space-between;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.18em;color:#8a8a90;">
           <span>TEMPO</span><span style="color:{{ statusColor }};">{{ status }}</span>
         </div>
         <div style="text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:108px;line-height:1;font-variant-numeric:tabular-nums;color:{{ timeColor }};">{{ time }}</div>
-        <button onClick="{{ togglePlay }}" style="height:60px;border-radius:10px;border:none;background:{{ playBg }};color:#101114;font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;letter-spacing:.06em;">{{ playLabel }}</button>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) 92px;gap:8px;">
+          <button onClick="{{ togglePlay }}" style="height:60px;border-radius:10px;border:none;background:{{ playBg }};color:#101114;font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;letter-spacing:.06em;">{{ playLabel }}</button>
+          <button onClick="{{ resetTime }}" style="height:60px;border-radius:10px;border:1px solid #5a2a27;background:transparent;color:#ff8a7e;font-size:14px;font-weight:700;">↺ Zerar</button>
+        </div>
       </div>
 
-      <div style="display:flex;flex-direction:column;gap:6px;background:#1a1b20;border:1px solid #2c2e34;border-radius:12px;padding:16px;">
+      <div style="display:flex;flex-direction:column;gap:4px;background:#1a1b20;border:1px solid #2c2e34;border-radius:12px;padding:12px 14px;">
         <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.18em;color:#8a8a90;">LIDERANDO</div>
         <div style="display:flex;align-items:center;gap:10px;min-width:0;">
           <span style="flex:none;width:12px;height:12px;border-radius:50%;background:{{ leaderDot }};"></span>
-          <span style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:30px;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ leader }}</span>
+          <span style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:28px;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ leader }}</span>
         </div>
         <div style="font-size:14px;color:#a6a6ac;">{{ leaderSub }}</div>
-        <div style="font-size:12px;color:#77777d;">Desempate: pontos → vantagens → menos punições → decisão</div>
       </div>
 
-      <div style="display:flex;flex-direction:column;gap:12px;background:#1a1b20;border:1px solid #2c2e34;border-radius:12px;padding:16px;">
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.18em;color:#8a8a90;">DURAÇÃO</div>
-          <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;">
-            <sc-for list="{{ presets }}" as="d" hint-placeholder-count="6">
-              <button onClick="{{ d.onClick }}" style="height:36px;border-radius:6px;border:1px solid #3a3c43;background:{{ d.bg }};color:{{ d.fg }};font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;">{{ d.label }}</button>
-            </sc-for>
-          </div>
-          <div style="display:flex;align-items:center;gap:6px;">
-            <input type="number" min="1" max="30" value="{{ customMin }}" onChange="{{ onCustomMin }}" style="flex:1;min-width:0;height:36px;padding:0 10px;border-radius:6px;border:1px solid #3a3c43;background:#101114;color:#eceae6;font-size:15px;outline:none;">
-            <span style="font-size:13px;color:#8a8a90;">min</span>
-            <input type="number" min="0" max="59" value="{{ customSec }}" onChange="{{ onCustomSec }}" style="flex:1;min-width:0;height:36px;padding:0 10px;border-radius:6px;border:1px solid #3a3c43;background:#101114;color:#eceae6;font-size:15px;outline:none;">
-            <span style="font-size:13px;color:#8a8a90;">s</span>
-            <button onClick="{{ setCustom }}" style="height:36px;padding:0 14px;border-radius:6px;border:none;background:#eceae6;color:#101114;font-size:14px;font-weight:700;">Aplicar</button>
-          </div>
-          <button onClick="{{ resetTime }}" style="height:38px;margin-top:4px;border-radius:8px;border:1px solid #5a2a27;background:transparent;color:#ff8a7e;font-size:14px;font-weight:600;">↺ Zerar tempo</button>
-        </div>
-        <div style="display:flex;justify-content:center;gap:16px;font-size:12px;color:#77777d;">
-          <span>Espaço · iniciar/pausar</span><span>Ctrl+Z · desfazer</span>
+      <div style="display:flex;flex-direction:column;gap:8px;background:#1a1b20;border:1px solid #2c2e34;border-radius:12px;padding:12px 14px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:.18em;color:#f2c94c;">EMPATE</div>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;">
+          <button onClick="{{ setBoth }}" style="height:44px;border-radius:8px;border:none;background:#f2c94c;color:#101114;font-size:14px;font-weight:700;">Ambos vencedores</button>
+          <button onClick="{{ setDecision }}" style="height:44px;border-radius:8px;border:1.5px solid #f2c94c;background:transparent;color:#f2c94c;font-size:14px;font-weight:700;">Decisão dos árbitros</button>
         </div>
       </div>
 
       <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;">
-        <button onClick="{{ undo }}" style="grid-column:1 / -1;height:46px;border-radius:10px;border:1px solid #2c2e34;background:#1a1b20;color:#eceae6;font-size:14px;font-weight:700;opacity:{{ undoOp }};">↶ Desfazer última ação</button>
-        <button onClick="{{ swapFighters }}" style="height:46px;border-radius:10px;border:1px solid #2c2e34;background:#1a1b20;color:#eceae6;font-size:14px;font-weight:700;">⇆ Trocar lutadores</button>
-        <button onClick="{{ toggleFlipOp }}" style="height:46px;border-radius:10px;border:1px solid #2c2e34;background:{{ flipOpBg }};color:#eceae6;font-size:14px;font-weight:700;">⇄ Inverter lados</button>
+        <button onClick="{{ undo }}" style="height:42px;border-radius:10px;border:1px solid #2c2e34;background:#1a1b20;color:#eceae6;font-size:14px;font-weight:700;opacity:{{ undoOp }};">↶ Desfazer</button>
+        <button onClick="{{ clearLog }}" style="height:42px;border-radius:10px;border:1px solid #2c2e34;background:transparent;color:#a6a6ac;font-size:14px;font-weight:600;">Limpar histórico</button>
+        <button onClick="{{ swapFighters }}" style="height:42px;border-radius:10px;border:1px solid #2c2e34;background:#1a1b20;color:#eceae6;font-size:14px;font-weight:700;">⇆ Trocar lutadores</button>
+        <button onClick="{{ toggleFlipOp }}" style="height:42px;border-radius:10px;border:1px solid #2c2e34;background:{{ flipOpBg }};color:#eceae6;font-size:14px;font-weight:700;">⇄ Inverter lados</button>
       </div>
 
-      <div style="display:flex;flex-direction:column;gap:10px;background:#1a1b20;border:1px solid #2c2e34;border-radius:12px;padding:16px;">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:.18em;color:#f2c94c;">EMPATE</div>
-        <button onClick="{{ setBoth }}" style="height:44px;border-radius:8px;border:none;background:#f2c94c;color:#101114;font-size:15px;font-weight:700;">Ambos vencedores</button>
-        <button onClick="{{ setDecision }}" style="height:44px;border-radius:8px;border:1.5px solid #f2c94c;background:transparent;color:#f2c94c;font-size:15px;font-weight:700;">Decisão dos árbitros</button>
-        <div style="font-size:12px;color:#77777d;line-height:1.4;">Se o tempo acabar empatado, vai automaticamente para decisão dos árbitros.</div>
+      <div style="display:flex;flex-direction:column;gap:8px;background:#1a1b20;border:1px solid #2c2e34;border-radius:12px;padding:12px 14px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.18em;color:#8a8a90;">DURAÇÃO</div>
+        <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;">
+          <sc-for list="{{ presets }}" as="d" hint-placeholder-count="6">
+            <button onClick="{{ d.onClick }}" style="height:32px;border-radius:6px;border:1px solid #3a3c43;background:{{ d.bg }};color:{{ d.fg }};font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;">{{ d.label }}</button>
+          </sc-for>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <input type="number" min="1" max="30" value="{{ customMin }}" onChange="{{ onCustomMin }}" style="flex:1;min-width:0;height:32px;padding:0 10px;border-radius:6px;border:1px solid #3a3c43;background:#101114;color:#eceae6;font-size:15px;outline:none;">
+          <span style="font-size:13px;color:#8a8a90;">min</span>
+          <input type="number" min="0" max="59" value="{{ customSec }}" onChange="{{ onCustomSec }}" style="flex:1;min-width:0;height:32px;padding:0 10px;border-radius:6px;border:1px solid #3a3c43;background:#101114;color:#eceae6;font-size:15px;outline:none;">
+          <span style="font-size:13px;color:#8a8a90;">s</span>
+          <button onClick="{{ setCustom }}" style="height:32px;padding:0 14px;border-radius:6px;border:none;background:#eceae6;color:#101114;font-size:14px;font-weight:700;">Aplicar</button>
+        </div>
       </div>
     </div>
 
@@ -230,7 +243,7 @@ button{font-family:inherit;cursor:pointer;}
           </div>
         </div>
       </div>
-      <div style="display:flex;flex-direction:column;gap:10px;margin-top:auto;padding-top:14px;border-top:1px solid #dddbd3;">
+      <div style="display:flex;flex-direction:column;gap:10px;padding-top:14px;border-top:1px solid #dddbd3;">
         <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:.18em;color:#55544f;">VENCE POR</div>
         <div style="display:flex;flex-wrap:wrap;gap:6px;">
           <sc-for list="{{ w.wins }}" as="m" hint-placeholder-count="5">
@@ -238,26 +251,21 @@ button{font-family:inherit;cursor:pointer;}
           </sc-for>
         </div>
       </div>
-    </div>
-  </div>
-  <div style="display:flex;flex-direction:column;gap:8px;background:#1a1b20;border:1px solid #2c2e34;border-radius:12px;padding:12px 16px;">
-    <div style="display:flex;align-items:center;gap:10px;">
-      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;letter-spacing:.08em;">HISTÓRICO DA PONTUAÇÃO</div>
-      <button onClick="{{ clearLog }}" style="margin-left:auto;height:32px;padding:0 12px;border-radius:8px;border:1px solid #3a3c43;background:transparent;color:#a6a6ac;font-size:13px;font-weight:600;">Limpar</button>
-    </div>
-    <sc-if value="{{ noLog }}" hint-placeholder-val="{{ true }}">
-      <div style="font-size:14px;color:#77777d;">Nenhum registro ainda.</div>
-    </sc-if>
-    <div style="display:flex;flex-direction:column;max-height:220px;overflow:auto;">
-      <sc-for list="{{ logRows }}" as="e" hint-placeholder-count="0">
-        <div style="display:grid;grid-template-columns:36px 56px 14px minmax(0,1fr) auto;align-items:center;gap:10px;padding:7px 0;border-top:1px solid #26282e;font-size:15px;color:{{ e.fg }};">
-          <span style="color:#77777d;font-size:13px;">#{{ e.n }}</span>
-          <span style="font-variant-numeric:tabular-nums;color:#a6a6ac;">{{ e.t }}</span>
-          <span style="width:12px;height:12px;border-radius:50%;background:{{ e.dot }};border:1px solid #55575e;"></span>
-          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><b>{{ e.who }}</b> · {{ e.text }}</span>
-          <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:17px;color:#a6a6ac;font-variant-numeric:tabular-nums;">{{ e.score }}</span>
+      <div style="flex:1 1 0;min-height:170px;display:flex;flex-direction:column;gap:6px;background:#e4e2dc;border-radius:12px;padding:12px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:.16em;color:#55544f;">HISTÓRICO<span style="letter-spacing:.08em;">{{ w.logCount }}</span></div>
+        <sc-if value="{{ w.noLog }}" hint-placeholder-val="{{ true }}">
+          <div style="font-size:14px;color:#77756e;">Nenhum registro ainda.</div>
+        </sc-if>
+        <div style="flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;">
+          <sc-for list="{{ w.logRows }}" as="e" hint-placeholder-count="0">
+            <div style="display:grid;grid-template-columns:54px minmax(0,1fr) auto;align-items:center;gap:10px;padding:7px 0;border-top:1px solid #d0cec6;font-size:15px;color:{{ e.fg }};">
+              <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;font-variant-numeric:tabular-nums;color:#55544f;">{{ e.t }}</span>
+              <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;">{{ e.text }}</span>
+              <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:17px;font-variant-numeric:tabular-nums;color:#55544f;">{{ e.total }}</span>
+            </div>
+          </sc-for>
         </div>
-      </sc-for>
+      </div>
     </div>
   </div>
   <sc-if value="{{ hasConfirm }}" hint-placeholder-val="{{ false }}">
@@ -272,7 +280,7 @@ button{font-family:inherit;cursor:pointer;}
       </div>
     </div>
   </sc-if>
-  <div style="font-size:12px;color:#77777d;">4ª punição = desclassificação. Abra o monitor na tela estendida e pressione F11.</div>
+  <div style="font-size:12px;color:#77777d;line-height:1.5;">Desempate: pontos → vantagens → menos punições → decisão. Tempo acabando empatado vai automaticamente para decisão dos árbitros. 4ª punição = desclassificação. Espaço · iniciar/pausar · Ctrl+Z · desfazer. Abra o monitor na tela estendida e pressione F11.</div>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script>
@@ -377,6 +385,8 @@ class Component extends DCLogic {
     const nm = k => n[k].name || (k === 'w' ? 'Branco' : 'Azul');
     n.log.push({ t: fmt(this.now(n)), k: 'swap', who: 'Troca de lado', text: nm('w') + ' agora no branco · ' + nm('b') + ' agora no azul', add: false, sw: score(n.w), sb: score(n.b) });
   }
+  // todo resultado passa pela confirmação antes de ser declarado
+  askResult(side, method, text) { this.setState({ confirm: 'result', pendingResult: { side, method, text } }); }
   // side: 'w' | 'b' (vencedor), 'both' (empate, ambos vencedores) ou 'decision' (empate aguardando árbitros)
   declare(n, side, method, text) {
     this.pause(n);
@@ -393,13 +403,18 @@ class Component extends DCLogic {
     }));
     rows.push({ label:'+1', val:'vantagem', count:f.adv, inc:() => this.up(n => { n[k].adv++; this.log(n, k, '+1 vantagem', true); }), dec:() => this.up(n => { if (n[k].adv > 0) { n[k].adv--; this.log(n, k, '−1 vantagem (removida)', false); } }) });
     rows.push({ label:'+1', val:'punição', count:f.pen, inc:() => this.up(n => { n[k].pen++; this.log(n, k, '+1 punição', true); }), dec:() => this.up(n => { if (n[k].pen > 0) { n[k].pen--; this.log(n, k, '−1 punição (removida)', false); } }) });
+    // histórico no painel do próprio lutador, mais recente em cima: tempo do cronômetro, ação e pontos dele depois dela
+    const mine = (this.state.log || []).filter(e => e.k === k);
+    const fg = k === 'w' ? ['#15161a', '#8a8880'] : ['#ffffff', 'rgba(255,255,255,.55)'];
     return {
+      noLog: !mine.length, logCount: mine.length ? mine.length + (mine.length === 1 ? ' registro' : ' registros') : '',
+      logRows: mine.slice().reverse().map(e => ({ t: e.t, text: e.text, total: (k === 'w' ? e.sw : e.sb) + ' pts', fg: e.add ? fg[0] : fg[1] })),
       name: f.name, team: f.team, score: score(f), adv: f.adv, pen: f.pen, rows,
       pts: rows.slice(0, 3).map((r, i) => ({ add: '+' + TYPES[i][2], sub: '−' + TYPES[i][2], inc: r.inc, dec: r.dec })),
       advInc: rows[3].inc, advDec: rows[3].dec, penInc: rows[4].inc, penDec: rows[4].dec,
       onName: e => { const v = e.target.value; this.up(n => { n[k].name = v; }, false); },
       onTeam: e => { const v = e.target.value; this.up(n => { n[k].team = v; }, false); },
-      wins: METHODS.map(([m, label]) => ({ label, onClick: () => this.up(n => this.declare(n, k, label, 'VENCEU por ' + label.toLowerCase())) }))
+      wins: METHODS.map(([m, label]) => ({ label, onClick: () => this.askResult(k, label, 'VENCEU por ' + label.toLowerCase()) }))
     };
   }
   renderVals() {
@@ -444,15 +459,15 @@ class Component extends DCLogic {
       hasDraw: isDraw, isDecision,
       drawTitle: isDecision ? 'EMPATE — AGUARDANDO DECISÃO DOS ÁRBITROS' : 'EMPATE — AMBOS VENCEDORES: ' + nm('w').toUpperCase() + ' E ' + nm('b').toUpperCase(),
       drawBlink: isDecision && !this.blink ? 0.25 : 1,
-      decideW: () => this.up(n => this.declare(n, 'w', 'Decisão', 'VENCEU por decisão dos árbitros')),
-      decideB: () => this.up(n => this.declare(n, 'b', 'Decisão', 'VENCEU por decisão dos árbitros')),
+      decideW: () => this.askResult('w', 'Decisão', 'VENCEU por decisão dos árbitros'),
+      decideB: () => this.askResult('b', 'Decisão', 'VENCEU por decisão dos árbitros'),
       decideWLabel: nm('w').toUpperCase() + ' VENCE', decideBLabel: nm('b').toUpperCase() + ' VENCE',
-      setBoth: () => this.up(n => this.declare(n, 'both', 'Empate', 'empate — ambos vencedores')),
-      setDecision: () => this.up(n => this.declare(n, 'decision', 'Decisão dos árbitros', 'empate — aguardando decisão dos árbitros')),
+      setBoth: () => this.askResult('both', 'Empate', 'empate — ambos vencedores'),
+      setDecision: () => this.askResult('decision', 'Decisão dos árbitros', 'empate — aguardando decisão dos árbitros'),
       saver: !!s.saver,
       toggleSaver: () => this.up(n => { n.saver = !n.saver; }, false),
       saverLabel: s.saver ? '● Proteção LIGADA' : 'Tela de proteção',
-      saverBg: s.saver ? '#f07a12' : 'transparent', saverFg: s.saver ? '#101114' : '#eceae6',
+      saverBg: s.saver ? '#46b53a' : 'transparent', saverFg: s.saver ? '#101114' : '#eceae6',
       bArea: s.flipOp ? 'right' : 'left', wArea: s.flipOp ? 'left' : 'right',
       toggleFlipOp: () => this.up(n => { n.flipOp = !n.flipOp; }, false),
       toggleFlipMon: () => this.up(n => { n.flipMon = !n.flipMon; }, false),
@@ -470,15 +485,21 @@ class Component extends DCLogic {
         new: { confirmTitle: 'Iniciar nova luta?', confirmText: 'Pontos, vantagens, punições, nomes, vencedor, histórico e tempo serão zerados.', confirmLabel: 'Sim, nova luta' },
         dur: { confirmTitle: 'Mudar a duração para ' + fmt(this.state.pendingDur || 0) + '?', confirmText: 'A luta já começou. O cronômetro volta para ' + fmt(this.state.pendingDur || 0) + ' e fica parado. A pontuação é mantida.', confirmLabel: 'Sim, mudar duração' },
         reset: { confirmTitle: 'Zerar o tempo?', confirmText: 'O cronômetro volta para ' + fmt(s.dur) + ' e fica parado. A pontuação é mantida.', confirmLabel: 'Sim, zerar tempo' },
-        swap: { confirmTitle: 'Trocar os lutadores de lado?', confirmText: nm('w') + ' vai para o lado AZUL e ' + nm('b') + ' vai para o lado BRANCO. Cada um leva seu nome, equipe, pontos, vantagens e punições. O tempo não muda.', confirmLabel: '⇆ Sim, trocar' }
+        swap: { confirmTitle: 'Trocar os lutadores de lado?', confirmText: nm('w') + ' vai para o lado AZUL e ' + nm('b') + ' vai para o lado BRANCO. Cada um leva seu nome, equipe, pontos, vantagens e punições. O tempo não muda.', confirmLabel: '⇆ Sim, trocar' },
+        result: (r => r.side === 'w' || r.side === 'b'
+          ? { confirmTitle: 'Confirmar vitória de ' + nm(r.side).toUpperCase() + '?', confirmText: (r.method === 'Decisão' ? 'Vitória por decisão dos árbitros' : 'Vitória por ' + r.method.toLowerCase()) + '. O cronômetro para e o resultado aparece no monitor.', confirmLabel: 'Sim, confirmar vitória' }
+          : r.side === 'both'
+          ? { confirmTitle: 'Encerrar com os dois vencedores?', confirmText: nm('w') + ' e ' + nm('b') + ' saem vencedores. O cronômetro para e o monitor mostra os dois nomes.', confirmLabel: 'Sim, ambos vencedores' }
+          : { confirmTitle: 'Levar para decisão dos árbitros?', confirmText: 'A luta fica empatada. O cronômetro para e o monitor mostra "Decisão dos árbitros" até você escolher o vencedor.', confirmLabel: 'Sim, decisão dos árbitros' })(this.state.pendingResult || {})
       }[this.state.confirm] || {}),
-      confirmBg: this.state.confirm === 'swap' ? '#eceae6' : '#c62f25', confirmFg: this.state.confirm === 'swap' ? '#101114' : '#ffffff',
+      // resultado: botão de confirmar na cor do lado que vence (dourado nos empates)
+      ...(() => { const c = this.state.confirm, side = c === 'result' && (this.state.pendingResult || {}).side;
+        return side === 'w' ? { confirmBg: '#f3f2ee', confirmFg: '#15161a' } : side === 'b' ? { confirmBg: '#1c3f99', confirmFg: '#ffffff' }
+          : c === 'result' ? { confirmBg: '#f2c94c', confirmFg: '#101114' } : c === 'swap' ? { confirmBg: '#eceae6', confirmFg: '#101114' } : { confirmBg: '#c62f25', confirmFg: '#ffffff' }; })(),
       cancelConfirm: () => this.setState({ confirm: null }),
-      doConfirm: () => { const c = this.state.confirm; this.setState({ confirm: null }); if (c === 'new') this.up(n => { n.w = fighter(); n.b = fighter(); n.winner = null; n.log = []; n.running = false; n.remaining = n.dur; delete n.confirm; }); else if (c === 'swap') this.up(n => { this.swapSides(n); delete n.confirm; }); else if (c === 'dur') { const d = this.state.pendingDur; this.up(n => { this.applyDur(n, d, d % 60 ? 0 : d / 60); delete n.confirm; delete n.pendingDur; }); } else this.up(n => { n.running = false; n.remaining = n.dur; delete n.confirm; }); },
+      doConfirm: () => { const c = this.state.confirm; this.setState({ confirm: null }); if (c === 'new') this.up(n => { n.w = fighter(); n.b = fighter(); n.winner = null; n.log = []; n.running = false; n.remaining = n.dur; delete n.confirm; }); else if (c === 'swap') this.up(n => { this.swapSides(n); delete n.confirm; }); else if (c === 'result') { const r = this.state.pendingResult; this.up(n => { this.declare(n, r.side, r.method, r.text); delete n.confirm; delete n.pendingResult; }); } else if (c === 'dur') { const d = this.state.pendingDur; this.up(n => { this.applyDur(n, d, d % 60 ? 0 : d / 60); delete n.confirm; delete n.pendingDur; }); } else this.up(n => { n.running = false; n.remaining = n.dur; delete n.confirm; }); },
       openMonitor: () => window.open('/monitor', 'placar-monitor'),
       w: this.side('w'), b: this.side('b'),
-      hasLog: (s.log || []).length > 0, noLog: !(s.log || []).length,
-      logRows: (s.log || []).slice().reverse().map((e, i, a) => ({ n: a.length - i, t: e.t, who: e.who, text: e.text, score: e.sw + ' × ' + e.sb, dot: e.k === 'w' ? '#f3f2ee' : (e.k === 'b' ? '#3f6fe0' : '#f07a12'), fg: e.add ? '#eceae6' : '#a6a6ac' })),
       clearLog: () => this.up(n => { n.log = []; })
     };
   }

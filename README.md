@@ -49,4 +49,4 @@ python -m http.server 8000
 - **🏆 Empate · ambos vencedores** — encerra a luta com os dois atletas vencedores (ex.: lutas infantis). O monitor mostra "VENCEDORES" com os dois nomes.
 - **⚖ Empate · decisão dos árbitros** — leva a luta para decisão manualmente, a qualquer momento.
 
-Para trocar a arte do evento, substitua `assets/arte-campeonato.png`.
+Para trocar a arte do evento, substitua `assets/arte-campeonato.jpg`.

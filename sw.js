@@ -1,7 +1,7 @@
 // Service worker: guarda o app no navegador para abrir e recarregar sem internet.
 // Arquivos do app: rede primeiro (pega atualizações do deploy), cache se a rede falhar ou demorar.
 // /vendor/: cache primeiro (bibliotecas e fontes com versão fixa).
-const CACHE = 'placar-bjj-v1';
+const CACHE = 'placar-bjj-v2';
 const PRECACHE = [
   '/',
   '/monitor',
@@ -9,9 +9,7 @@ const PRECACHE = [
   '/favicon.ico',
   '/favicon.svg',
   '/assets/apple-touch-icon.png',
-  '/assets/arte-campeonato.png',
-  ...['br-motos', 'pet-shopping', 'vitoria-ferragens', 'ramalho-paineis', 'team-zimmermann', 'jhony-croc', 'copicenter', 'cvt-vistoria', 'salaam-aleikum', 'almeida-fight-club']
-    .map(f => `/assets/patrocinadores/${f}.webp`),
+  '/assets/arte-campeonato.jpg',
   '/vendor/react.production.min.js',
   '/vendor/react-dom.production.min.js',
   '/vendor/babel.min.js',
